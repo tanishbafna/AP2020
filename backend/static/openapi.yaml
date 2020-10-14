@@ -91,6 +91,20 @@ paths:
         required: true
         schema:
           type: string
+      - name: stars
+        in: query
+        description: Filter by review stars
+        schema:
+          type: integer
+          enum: [1,2,3,4,5]
+        required: false
+      - name: page-number
+        in: query
+        description: Pagination
+        required: false
+        schema:
+          type: integer
+          default: 1
       responses:
         200:
           description: Product Reviews
@@ -111,7 +125,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/addToCart'
+              $ref: '#/components/schemas/itemInCart'
         required: true
       responses:
         200:
@@ -143,7 +157,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/viewCart'
+                type: array
+                items:
+                  $ref: '#/components/schemas/itemInCart'
         400:
           description: Invalid status parameter
       security:
@@ -203,7 +219,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/cartEdited'
+                $ref: '#/components/schemas/itemInCart'
         400:
           description: Bad input parameter
           content: {}
@@ -244,60 +260,207 @@ paths:
 components:
   schemas:
     productSearch:
+      required:
+      - createdAt
+      - detectionMechanism
+      - enabled
+      - id
+      - keyword
+      - userId
       type: object
       properties:
-        id:
+        next_page: 
+          type: integer
+        totalProducts:
           type: string
-          description: EXAMPLE
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              asin:
+                description: Amazon Standard Identification Number
+                type: string
+              thumbnail:
+                type: string
+              title:
+                type: string
+              price:
+                type: object
+                properties:
+                  before_price:
+                    type: number
+                  currency:
+                    type: string
+                  current_price:
+                    type: number
+                  discounted:
+                    type: boolean
+                  savings_amount:
+                    type: number
+                  savings_percent:
+                    type: number
+              position:
+                type: object
+                properties:
+                  global_position:
+                    type: integer
+                  position:
+                    type: integer
+              reviews:
+                type: object
+                properties:
+                  rating:
+                    type: number
+                    minimum: 1.0
+                    maximum: 5.0
+                  total_reviews:
+                    type: number
+              url:
+                type: string
           
     productDetails:
       type: object
       properties:
-        id:
+        asin:
+          description: Amazon Standard Identification Number
           type: string
-          description: EXAMPLE
+        title:
+          type: string
+        description:
+          type: string
+        main_image:
+          type: string
+        url:
+          type: string
+        images:
+          type: array
+          items:
+            type: string
+        feature_bullets:
+          type: array
+          items:
+            type: string
+        price:
+          type: object
+          properties:
+            before_price:
+              type: number
+            currency:
+              type: string
+            current_price:
+              type: number
+            discounted:
+              type: boolean
+            savings_amount:
+              type: number
+            savings_percent:
+              type: number
+        product_information:
+          type: object
+          properties:
+            brand:
+              type: string
+            manufacturer:
+              type: string
+            sold_by:
+              type: string
+        reviews:
+            type: object
+            properties:
+              rating:
+                type: number
+                minimum: 1.0
+                maximum: 5.0
+              total_reviews:
+                type: number
+        also_bought:
+            type: array
+            items:
+              type: string
+        
           
     productReviews:
       type: object
       properties:
-        id:
-          type: string
-          description: EXAMPLE
-            
-    viewCart:
-      type: object
-      properties:
-        id:
-          type: string
-          description: EXAMPLE
+        next_page:
+          type: integer
+        reviews:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              rating:
+                type: number
+                minimum: 1.0
+                maximum: 5.0
+              review:
+                type: string
+              title:
+                type: string
+              verified_purchase:
+                type: string
+  
           
-    addToCart:
+    itemInCart:
       type: object
+      required:
+      - asin
+      - status
+      - name
+      - price
+      - quantity
       properties:
-        id:
+        asin:
           type: string
-          description: EXAMPLE
+        status:
+          type: string
+          enum: ['orders', 'wishlist', 'incart']
+        name:
+          type: string
+        price:
+          type: number
+        quantity:
+          type: integer
           
     cartEdit:
       type: object
+      required:
+      - status
+      - quantity
       properties:
-        id:
+        status:
           type: string
-          description: EXAMPLE
-          
-    cartEdited:
-      type: object
-      properties:
-        id:
+        quantity:
           type: string
-          description: EXAMPLE
           
     addReview:
       type: object
+      required:
+      - id
+      - name
+      - rating
+      - review
+      - title
       properties:
         id:
           type: string
-          description: EXAMPLE
+          description: userId
+        name:
+          type: string
+          description: userName
+        rating:
+          type: number
+          minimum: 1.0
+          maximum: 5.0
+        review:
+          type: string
+        title:
+          type: string
           
   securitySchemes:
     Bearer:

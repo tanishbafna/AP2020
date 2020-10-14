@@ -115,12 +115,14 @@ def details(idStr):
     headers = {'x-rapidapi-host': 'amazon-product-reviews-keywords.p.rapidapi.com', 'x-rapidapi-key':APIKey}
     response = requests.request("GET", url, headers=headers, params=querystring)
 
-    dataResponse = response.json()
+    dataResponse = response.json().get('product')
     if dataResponse is None or dataResponse == {}:
         return Response(status=404)
     
-    dataResponse = json.loads(dataResponse)
-    dataResponse.pop('variants')
+    try:
+        dataResponse.pop('variants')
+    except:
+        pass
 
     try:
         reviewData = db.child('reviews').child(idStr).get().val()
@@ -149,8 +151,19 @@ def details(idStr):
 @app.route('/reviews/<string:idStr>', methods=["GET"])
 def reviews(idStr):
 
+    page = request.args.get('page-number', type=int, default=1)
+    if page < 1:
+        page = 1
+
+    filterStar = request.args.get('stars', type=int, default=None)
+    filterStar = 1 if filterStar is not None and filterStar < 1 else filterStar
+    filterStar = 5 if filterStar is not None and filterStar > 5 else filterStar
+    
     url = "https://rapidapi.p.rapidapi.com/product/reviews"
-    querystring = {"asin":idStr,"country":country}
+    querystring = {"asin":idStr,"country":country, "page":page}
+
+    if filterStar is not None:
+        querystring['filter_by_star'] = filterStar
 
     headers = {'x-rapidapi-host': 'amazon-product-reviews-keywords.p.rapidapi.com', 'x-rapidapi-key':APIKey}
     response = requests.request("GET", url, headers=headers, params=querystring)
@@ -250,8 +263,9 @@ def cartEdit(authDict, idStr):
         return Response(status=400)
 
     db.child("userCart").child(userId).child(idStr).update(data)
+    data = db.child('userCart').child(userId).child(idStr).get().val()
 
-    return Response(status=200)
+    return jsonify(data)
 
 #=========================
 
@@ -280,10 +294,9 @@ def addReview(authDict, idStr):
     data = request.get_json()
     addSchema = {
         "name": {'type':'string', 'required':True, 'empty':False, 'nullable':False},
-        "rating": {'type':'number', 'required':True, 'nullable':False, 'min': 0.0, 'max': 5.0},
+        "rating": {'type':'number', 'required':True, 'nullable':False, 'min': 1.0, 'max': 5.0},
         "review": {'type':'string', 'required':True, 'empty':False, 'nullable':False},
-        "title": {'type':'string', 'required':True, 'empty':False, 'nullable':False, 'maxlength': 50},
-        "verified_purchase": {'type': 'bool', 'required':True, 'nullable':False}
+        "title": {'type':'string', 'required':True, 'empty':False, 'nullable':False, 'maxlength': 50}
         }
 
     if data is None:
@@ -298,6 +311,8 @@ def addReview(authDict, idStr):
 
     data['id'] = userId
     db.child('reviews').child(idStr).child('comments').push(data)
+
+    # also add verified purchase
 
     return Response(status=200)
 
