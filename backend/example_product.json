@@ -1,0 +1,101 @@
+{
+  "product": {
+    "also_bought": [], 
+    "asin": "B07JG7DS1T", 
+    "badges": {
+      "amazon_prime": false, 
+      "amazon_\u0441hoice": false
+    }, 
+    "bestsellers_rank": [], 
+    "delivery_message": "", 
+    "description": "", 
+    "feature_bullets": [
+      "6.1-inch (15.5 cm) Liquid Retina HD LCD display", 
+      "Water and dust resistant (1 meter for up to 30 minutes, IP67)", 
+      "Single 12MP Wide camera with Portrait mode, Portrait Lighting, Depth Control, Smart HDR, and 4K video up to 60fps", 
+      "7MP TrueDepth front camera system with Portrait mode, Portrait Lighting, Depth Control, and 1080p video", 
+      "Face ID for secure authentication and Apple Pay", 
+      "A12 Bionic with second-generation Neural Engine", 
+      "Fast-charge capable", 
+      "Wireless charging", 
+      "iOS 13 with Dark Mode, new tools for editing photos and video, and brand new privacy features", 
+      "Manufacturer Detail: 1. One Apple Park Way, Cupertino, California 95014, USA, 2. Apple India Private Limited No,24, 19th floor, Concorde Tower C, UB City, Vittal Mallya Road, Bangalore-560 002", 
+      "Importer: Apple India Private Limited No,24, 19th floor, Concorde Tower C, UB City, Vittal Mallya Road, Bangalore-560 002", 
+      "Country of Origin: India or China", 
+      "Packer Details: Apple India Private Limited No,24, 19th floor, Concorde Tower C, UB City, Vittal Mallya Road, Bangalore-560 002"
+    ], 
+    "images": [
+      "https://images-na.ssl-images-amazon.com/images/I/411RlYrIYYL._AC_SY879_.jpg", 
+      "https://images-na.ssl-images-amazon.com/images/I/31mw4TCDGhL._AC_SY879_.jpg", 
+      "https://images-na.ssl-images-amazon.com/images/I/415bjQjbRNL._AC_SY879_.jpg", 
+      "https://images-na.ssl-images-amazon.com/images/I/21pjyxMr4kL._AC_SY879_.jpg", 
+      "https://images-na.ssl-images-amazon.com/images/I/31oNOtPhBDL._AC_SY879_.jpg", 
+      "https://images-na.ssl-images-amazon.com/images/I/41dXQbRZQGL._AC_SY879_.jpg"
+    ], 
+    "item_available": true, 
+    "main_image": "https://images-na.ssl-images-amazon.com/images/I/411RlYrIYYL._AC_SY879_.jpg", 
+    "price": {
+      "before_price": 57800, 
+      "currency": "INR", 
+      "current_price": 53500, 
+      "discounted": true, 
+      "savings_amount": 4300, 
+      "savings_percent": 7.44, 
+      "symbol": "\u20b9"
+    }, 
+    "product_information": {
+      "available_for_days": 0, 
+      "available_for_months": 0, 
+      "available_from": "", 
+      "available_from_utc": "", 
+      "brand": "Visit the Apple Store", 
+      "department": "", 
+      "dimensions": "15.1 x 0.8 x 7.6 cm", 
+      "fulfilled_by": "Amazon", 
+      "manufacturer": "Apple Inc", 
+      "model_number": "iPhone XR", 
+      "qty_per_order": 5, 
+      "sold_by": "Appario Retail Private Ltd", 
+      "store_id": "", 
+      "weight": "194 g"
+    }, 
+    "reviews": {
+      "answered_questions": 1000, 
+      "rating": "4.6", 
+      "total_reviews": 14950
+    }, 
+    "sponsored_products": [], 
+    "title": "Apple iPhone XR (128GB) - Black", 
+    "total_images": 6, 
+    "total_videos": 1, 
+    "url": "https://www.amazon.in/dp/B07JG7DS1T",
+    "videos": [
+      {
+        "durationSeconds": 34, 
+        "durationTimestamp": "00:34", 
+        "holderId": "holderab55f6f3062746eda86ee4382c20ce4e", 
+        "isHeroVideo": false, 
+        "isVideo": true, 
+        "languageCode": "en_IN", 
+        "marketPlaceID": "A21TJRUUN4KGV", 
+        "mediaObjectId": "ab55f6f3062746eda86ee4382c20ce4e", 
+        "minimumAge": 0, 
+        "offset": "0", 
+        "slateHash": {
+          "extension": "jpg", 
+          "height": "404", 
+          "physicalID": "31mw4TCDGhL", 
+          "width": "720"
+        }, 
+        "slateUrl": "https://images-na.ssl-images-amazon.com/images/I/31mw4TCDGhL.SX522_.jpg", 
+        "thumb": "https://images-na.ssl-images-amazon.com/images/I/31mw4TCDGhL._SX35_SY46._CR0,0,35,46_BG85,85,85_BR-120_PKdp-play-icon-overlay__.jpg", 
+        "thumbUrl": "https://images-na.ssl-images-amazon.com/images/I/31mw4TCDGhL._SX35_SY46._CR0,0,35,46_BG85,85,85_BR-120_PKdp-play-icon-overlay__.jpg", 
+        "title": "Apple iPhone XR", 
+        "url": "https://d12xgfa7l6zj5h.cloudfront.net/5fd90040-7744-4da1-b2a2-c9d8d4597abc/default.jobtemplate.mp4.480.mp4", 
+        "variant": "MAIN", 
+        "videoHeight": "480", 
+        "videoWidth": "854"
+      }
+    ]
+  }
+}
