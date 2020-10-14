@@ -6,3 +6,7 @@
 - Key: 6e5b046845msh4fa8efd1838c632p11d277jsn597b02a6dc1d
 
 Use Postman to test the API
+
+## Models
+
+## Database Routes

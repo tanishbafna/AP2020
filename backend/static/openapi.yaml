@@ -1,0 +1,306 @@
+openapi: 3.0.1
+
+info:
+  title: E-Commerce AP20
+  description: API
+  version: 1.0.0
+
+servers:
+- url: http://127.0.0.1:5000/
+
+tags:
+- name: API Proxy
+  description: Amazon API
+- name: Cart Endpoints
+  description: All Cart Operations
+- name: Review Endpoints
+  description: All Review Operations
+
+paths:
+  /search:
+    get:
+      tags:
+      - API Proxy
+      summary: Query for products
+      operationId: query
+      parameters:
+      - name: q
+        in: query
+        description: Product search string
+        schema:
+          type: string
+        required: true
+      - name: page-number
+        in: query
+        description: Pagination
+        required: false
+        schema:
+          type: integer
+          default: 1
+      - name: category
+        in: query
+        description: Search in category
+        schema:
+          type: string
+        required: false
+      responses:
+        200:
+          description: Products matching criteria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/productSearch'
+        204:
+          description: No matching products
+        400:
+          description: Bad input parameter
+
+  /product/{asin}:
+    get:
+      tags:
+      - API Proxy
+      summary: Get info for <asin> product
+      operationId: details
+      parameters:
+      - name: asin
+        in: path
+        description: Amazon Standard Identification Number
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Product Details
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/productDetails'
+        404:
+          description: No matching product
+          
+  /reviews/{asin}/:
+    get:
+      tags:
+      - API Proxy
+      summary: Get reviews for <asin> product
+      operationId: reviews
+      parameters:
+      - name: asin
+        in: path
+        description: Amazon Standard Identification Number
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: Product Reviews
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/productReviews'
+        204:
+          description: No reviews
+          
+  /cart/:
+    put:
+      tags:
+      - Cart Endpoints
+      summary: Add to Cart
+      operationId: addToCart
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/addToCart'
+        required: true
+      responses:
+        200:
+          description: Succesfully added to Cart
+        400:
+          description: Bad input parameter
+          content: {}
+        401:
+          description: Unauthorized
+      security:
+      - Bearer: []
+      
+  /cart/{status}:
+    get:
+      tags:
+      - Cart Endpoints
+      summary: View Cart
+      operationId: delete
+      parameters:
+      - name: status
+        in: path
+        required: true
+        schema:
+          enum: ['orders', 'wishlist', 'incart'] 
+          type: string
+      responses:
+        200:
+          description: Cart with specified status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/viewCart'
+        400:
+          description: Invalid status parameter
+      security:
+      - Bearer: []
+      
+  /cart/{status}/{asin}:
+    delete:
+      tags:
+      - Cart Endpoints
+      summary: Delete from cart
+      operationId: deleteFromCart
+      parameters:
+      - name: status
+        in: path
+        required: true
+        schema:
+          enum: ['orders', 'wishlist', 'incart'] 
+          type: string
+      - name: asin
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: OK. Product deleted from cart
+      security:
+      - Bearer: []
+      
+  /cart/{status}/{asin}/:
+    patch:
+      tags:
+      - Cart Endpoints
+      summary: Edit product in cart
+      operationId: editInCart
+      parameters:
+      - name: status
+        in: path
+        required: true
+        schema:
+          enum: ['orders', 'wishlist', 'incart'] 
+          type: string
+      - name: asin
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/cartEdit'
+        required: true
+      responses:
+        200:
+          description: Successfully edited cart
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cartEdited'
+        400:
+          description: Bad input parameter
+          content: {}
+        401:
+          description: Unauthorized
+      security:
+      - Bearer: []
+      
+  /reviews/{asin}:
+    put:
+      tags:
+      - Review Endpoints
+      summary: Add review for <asin> product
+      operationId: addReview
+      parameters:
+      - name: asin
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/addReview'
+        required: true
+      responses:
+        200:
+          description: Succesfully added review
+        400:
+          description: Bad input parameter
+          content: {}
+        401:
+          description: Unauthorized
+      security:
+      - Bearer: []
+
+components:
+  schemas:
+    productSearch:
+      type: object
+      properties:
+        id:
+          type: string
+          description: EXAMPLE
+          
+    productDetails:
+      type: object
+      properties:
+        id:
+          type: string
+          description: EXAMPLE
+          
+    productReviews:
+      type: object
+      properties:
+        id:
+          type: string
+          description: EXAMPLE
+            
+    viewCart:
+      type: object
+      properties:
+        id:
+          type: string
+          description: EXAMPLE
+          
+    addToCart:
+      type: object
+      properties:
+        id:
+          type: string
+          description: EXAMPLE
+          
+    cartEdit:
+      type: object
+      properties:
+        id:
+          type: string
+          description: EXAMPLE
+          
+    cartEdited:
+      type: object
+      properties:
+        id:
+          type: string
+          description: EXAMPLE
+          
+    addReview:
+      type: object
+      properties:
+        id:
+          type: string
+          description: EXAMPLE
+          
+  securitySchemes:
+    Bearer:
+      type: apiKey
+      name: Authorization
+      in: header
