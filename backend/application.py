@@ -237,7 +237,13 @@ def cartAdd(authDict):
 
     db.child('userCart').child(userId).child(data.get('asin')).set(data)
 
-    return Response(status=200)
+    prevData = db.child('userProfile').child(userId).get().val()
+    prevData[data['status']] += 1
+    db.child('userProfile').child(userId).update(prevData)
+
+    data = db.child('userCart').child(userId).child(data.get('asin')).get().val()
+
+    return jsonify(data)
 
 #=========================
 
@@ -251,17 +257,21 @@ def cartView(authDict, status):
     if status not in ['orders', 'wishlist', 'incart']:
         return Response(status=400)
 
+    listResponse = []
     data = db.child('userCart').child(userId).get().val() # currently sending back all
-    # data = requests.get(f'https://ap2020-1.firebaseio.com/userCart/{userId}.json?orderBy=status').json()
+    
+    for v in data.values():
+        if v['status'] == status:
+            listResponse.append(v)
 
-    return jsonify(data)
+    return jsonify(listResponse)
 
 #=========================
 
 # EDITING CART STATUS
-@app.route('/cart/<string:idStr>', methods=["PATCH"])
+@app.route('/cart/<string:status>/<string:idStr>', methods=["PATCH"])
 @userId_required
-def cartEdit(authDict, idStr):
+def cartEdit(authDict, status, idStr):
 
     userId = authDict.get('userId')
 
@@ -282,6 +292,12 @@ def cartEdit(authDict, idStr):
         return Response(status=400)
 
     db.child("userCart").child(userId).child(idStr).update(data)
+    
+    prevData = db.child('userProfile').child(userId).get().val()
+    prevData[status] -= 1
+    prevData[data['status']] += 1
+    db.child('userProfile').child(userId).update(prevData)
+
     data = db.child('userCart').child(userId).child(idStr).get().val()
 
     return jsonify(data)
@@ -289,13 +305,16 @@ def cartEdit(authDict, idStr):
 #=========================
 
 # REMOVING FROM CART
-@app.route('/cart/<string:idStr>', methods=["DELETE"])
+@app.route('/cart/<string:status>/<string:idStr>', methods=["DELETE"])
 @userId_required
-def cartRemove(authDict, idStr):
+def cartRemove(authDict, status, idStr):
 
     userId = authDict.get('userId')
 
     db.child("userCart").child(userId).child(idStr).remove()
+    prevData = db.child('userProfile').child(userId).get().val()
+    prevData[status] -= 1
+    db.child('userProfile').child(userId).update(prevData)
 
     return Response(status=200)
 

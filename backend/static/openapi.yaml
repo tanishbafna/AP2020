@@ -160,6 +160,10 @@ paths:
       responses:
         200:
           description: Succesfully added to Cart
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/itemInCart'
         400:
           description: Bad input parameter
           content: {}
@@ -466,7 +470,7 @@ components:
         status:
           type: string
         quantity:
-          type: string
+          type: integer
           
     addReview:
       type: object
