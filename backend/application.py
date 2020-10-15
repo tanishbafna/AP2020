@@ -68,12 +68,29 @@ def userId_required(f):
     return decorated
 
 #=========================
-# API PROXY
+# AMAZON DATA
 #=========================
 
-# SEARCH PROXY
+# HOME
+@app.route('/', methods=["GET"])
+@userId_required
+def home(authDict):
+    
+    url = "https://rapidapi.p.rapidapi.com/product/search"
+    querystring = {"keyword":'s', "country":country, "page":1}
+
+    headers = {'x-rapidapi-host': 'amazon-product-reviews-keywords.p.rapidapi.com', 'x-rapidapi-key':APIKey}
+    response = requests.request("GET", url, headers=headers, params=querystring)
+
+    dataResponse = response.json()
+
+    return dataResponse
+
+#=========================
+# SEARCH
 @app.route('/search', methods=["GET"])
-def search():
+@userId_required
+def search(authDict):
 
     q = request.args.get('q', type=str, default=None)
     if q.isspace():
@@ -105,9 +122,10 @@ def search():
 
 #=========================
 
-# DETAILS PROXY
+# DETAILS
 @app.route('/product/<string:idStr>', methods=["GET"])
-def details(idStr):
+@userId_required
+def details(authDict, idStr):
 
     url = "https://rapidapi.p.rapidapi.com/product/details"
     querystring = {"asin":idStr,"country":country}
@@ -147,9 +165,10 @@ def details(idStr):
 
 #=========================
 
-# REVIEWS PROXY
+# REVIEWS
 @app.route('/reviews/<string:idStr>', methods=["GET"])
-def reviews(idStr):
+@userId_required
+def reviews(authDict, idStr):
 
     page = request.args.get('page-number', type=int, default=1)
     if page < 1:

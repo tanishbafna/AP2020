@@ -9,7 +9,7 @@ servers:
 - url: http://127.0.0.1:5000/
 
 tags:
-- name: API Proxy
+- name: Amazon Data
   description: Amazon API
 - name: Cart Endpoints
   description: All Cart Operations
@@ -17,10 +17,30 @@ tags:
   description: All Review Operations
 
 paths:
+  /:
+    get:
+      security:
+      - Bearer: []
+      tags:
+      - Amazon Data
+      summary: Home Page
+      operationId: home
+      responses:
+        200:
+          description: Random Products
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/productSearch'
+        401:
+          description: Unauthorized
+      
   /search:
     get:
+      security:
+      - Bearer: []
       tags:
-      - API Proxy
+      - Amazon Data
       summary: Query for products
       operationId: query
       parameters:
@@ -54,11 +74,15 @@ paths:
           description: No matching products
         400:
           description: Bad input parameter
+        401:
+          description: Unauthorized
 
   /product/{asin}:
     get:
+      security:
+      - Bearer: []
       tags:
-      - API Proxy
+      - Amazon Data
       summary: Get info for <asin> product
       operationId: details
       parameters:
@@ -75,13 +99,17 @@ paths:
             application/json:
               schema:
                   $ref: '#/components/schemas/productDetails'
+        401:
+          description: Unauthorized
         404:
           description: No matching product
           
   /reviews/{asin}/:
     get:
+      security:
+      - Bearer: []
       tags:
-      - API Proxy
+      - Amazon Data
       summary: Get reviews for <asin> product
       operationId: reviews
       parameters:
@@ -114,6 +142,8 @@ paths:
                 $ref: '#/components/schemas/productReviews'
         204:
           description: No reviews
+        401:
+          description: Unauthorized
           
   /cart/:
     put:
