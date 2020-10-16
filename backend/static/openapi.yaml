@@ -144,6 +144,24 @@ paths:
           description: No reviews
         401:
           description: Unauthorized
+    
+  /categories:
+    get:
+      security:
+      - Bearer: []
+      tags:
+      - Amazon Data
+      summary: Categories of products
+      operationId: category
+      responses:
+        200:
+          description: List of categories
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/categories'
+        401:
+          description: Unauthorized
           
   /cart/:
     put:
@@ -439,7 +457,16 @@ components:
               verified_purchase:
                 type: string
   
-          
+    categories:
+      type: array
+      items:
+          type: object
+          properties:
+              category:
+                type: string
+              name:
+                type: string
+
     itemInCart:
       type: object
       required:

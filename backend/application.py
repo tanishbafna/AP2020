@@ -19,7 +19,7 @@ app.config['SECRET_KEY'] = os.urandom(24)
 # Adding a CORS Policy
 CORS(app)
 
-pb = pyrebase.initialize_app(json.load(open('fbconfig.json')))
+pb = pyrebase.initialize_app(json.load(open('backend/fbconfig.json')))
 db = pb.database()
 
 APIKey=os.getenv('X-RapidAPI-Key')
@@ -221,6 +221,24 @@ def reviews(authDict, idStr):
 
     return jsonify(dataResponse)
 
+#=========================
+
+@app.route('/categories', methods=["GET"])
+@userId_required
+@docache(15)
+def categories(authDict):
+
+    url = "https://rapidapi.p.rapidapi.com/categories"
+    querystring = {"country":country}
+
+    headers = {'x-rapidapi-host': 'amazon-product-reviews-keywords.p.rapidapi.com', 'x-rapidapi-key':APIKey}
+    response = requests.request("GET", url, headers=headers, params=querystring)
+
+    data = []
+    for v in response.json().values():
+        data.append(v)
+    
+    return json.dumps(data)
 
 #=========================
 # CART = WISHLIST, ORDERS, INCART
