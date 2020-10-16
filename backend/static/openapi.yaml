@@ -23,25 +23,7 @@ paths:
       - Bearer: []
       tags:
       - Amazon Data
-      summary: Home Page
-      operationId: home
-      responses:
-        200:
-          description: Random Products
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/productSearch'
-        401:
-          description: Unauthorized
-      
-  /search:
-    get:
-      security:
-      - Bearer: []
-      tags:
-      - Amazon Data
-      summary: Query for products
+      summary: Homepage and Query for products
       operationId: query
       parameters:
       - name: q
@@ -49,7 +31,7 @@ paths:
         description: Product search string
         schema:
           type: string
-        required: true
+        required: false
       - name: page-number
         in: query
         description: Pagination
@@ -65,15 +47,11 @@ paths:
         required: false
       responses:
         200:
-          description: Products matching criteria
+          description: Products matching criteria or Random homepage products
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/productSearch'
-        204:
-          description: No matching products
-        400:
-          description: Bad input parameter
         401:
           description: Unauthorized
 

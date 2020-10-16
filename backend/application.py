@@ -9,6 +9,7 @@ import json
 import os
 from flask_swagger_ui import get_swaggerui_blueprint
 from datetime import datetime, timedelta
+import random
 
 # Setting up Flask
 
@@ -88,44 +89,29 @@ def userId_required(f):
 # HOME
 @app.route('/', methods=["GET"])
 @userId_required
-@docache(15)
+# @docache(1)
 def home(authDict):
-    
-    url = "https://rapidapi.p.rapidapi.com/product/search"
-    querystring = {"keyword":'s', "country":country, "page":1}
-
-    headers = {'x-rapidapi-host': 'amazon-product-reviews-keywords.p.rapidapi.com', 'x-rapidapi-key':APIKey}
-    response = requests.request("GET", url, headers=headers, params=querystring)
-
-    dataResponse = response.json()
-
-    return json.dumps(dataResponse)
-
-#=========================
-# SEARCH
-@app.route('/search', methods=["GET"])
-@userId_required
-@docache(15)
-def search(authDict):
 
     q = request.args.get('q', type=str, default=None)
-    if q.isspace():
-        return Response(status=400)
+
+    if q is None or q.isspace():
+        url = "https://rapidapi.p.rapidapi.com/product/search"
+        querystring = {"keyword":random.choice(['a','s','p']), "country":country, "page":1}
+
     else:
         q = q.strip()
 
-    page = request.args.get('page-number', type=int, default=1)
-    if page < 1:
-        page = 1
+        page = request.args.get('page-number', type=int, default=1)
+        if page < 1:
+            page = 1
 
-    category = request.args.get('category', type=str, default=None)
-    
-    url = "https://rapidapi.p.rapidapi.com/product/search"
-    querystring = {"keyword":q, "country":country, "page":page}
+        url = "https://rapidapi.p.rapidapi.com/product/search"
+        querystring = {"keyword":q, "country":country, "page":page}
 
-    if category is not None:
-        category = category.strip()
-        querystring['category'] = category
+        category = request.args.get('category', type=str, default=None)
+        if category is not None:
+            category = category.strip()
+            querystring['category'] = category
 
     headers = {'x-rapidapi-host': 'amazon-product-reviews-keywords.p.rapidapi.com', 'x-rapidapi-key':APIKey}
     response = requests.request("GET", url, headers=headers, params=querystring)
@@ -134,14 +120,13 @@ def search(authDict):
     if dataResponse is None or dataResponse == {}:
         return Response(status=204)
 
-    return json.dumps(dataResponse)
+    return json.dumps(dataResponse, indent=4)
 
 #=========================
 
 # DETAILS
 @app.route('/product/<string:idStr>', methods=["GET"])
 @userId_required
-
 def details(authDict, idStr):
 
     url = "https://rapidapi.p.rapidapi.com/product/details"
