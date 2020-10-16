@@ -20,7 +20,7 @@ app.config['SECRET_KEY'] = os.urandom(24)
 # Adding a CORS Policy
 CORS(app)
 
-pb = pyrebase.initialize_app(json.load(open('backend/fbconfig.json')))
+pb = pyrebase.initialize_app(json.load(open('fbconfig.json')))
 db = pb.database()
 
 APIKey=os.getenv('X-RapidAPI-Key')
@@ -89,29 +89,27 @@ def userId_required(f):
 # HOME
 @app.route('/', methods=["GET"])
 @userId_required
-# @docache(1)
+@docache(20)
 def home(authDict):
 
     q = request.args.get('q', type=str, default=None)
 
-    if q is None or q.isspace():
-        url = "https://rapidapi.p.rapidapi.com/product/search"
-        querystring = {"keyword":random.choice(['a','s','p']), "country":country, "page":1}
+    if q is None or q.isspace() or q == '':
+        q = 'a'#random.choice(['a','s','p'])
 
-    else:
-        q = q.strip()
+    q = q.strip()
 
-        page = request.args.get('page-number', type=int, default=1)
-        if page < 1:
-            page = 1
+    page = request.args.get('page-number', type=int, default=1)
+    if page < 1:
+        page = 1
 
-        url = "https://rapidapi.p.rapidapi.com/product/search"
-        querystring = {"keyword":q, "country":country, "page":page}
+    url = "https://rapidapi.p.rapidapi.com/product/search"
+    querystring = {"keyword":q, "country":country, "page":page}
 
-        category = request.args.get('category', type=str, default=None)
-        if category is not None:
-            category = category.strip()
-            querystring['category'] = category
+    category = request.args.get('category', type=str, default=None)
+    if category is not None:
+        category = category.strip()
+        querystring['category'] = category
 
     headers = {'x-rapidapi-host': 'amazon-product-reviews-keywords.p.rapidapi.com', 'x-rapidapi-key':APIKey}
     response = requests.request("GET", url, headers=headers, params=querystring)
@@ -210,7 +208,7 @@ def reviews(authDict, idStr):
 
 @app.route('/categories', methods=["GET"])
 @userId_required
-@docache(15)
+@docache(30)
 def categories(authDict):
 
     url = "https://rapidapi.p.rapidapi.com/categories"
