@@ -1,6 +1,7 @@
 :root {
-  --color-primary: rgb(19, 165, 116);
+  --color-primary: #DDA162;
   --color-secondary: rgb(255, 255, 255);
+  --color-secondary2: #c4b7a9;
   --color-primary-txt: rgb(39, 39, 39);
   --border-radius: 0.2rem;
 }

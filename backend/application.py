@@ -88,7 +88,7 @@ def userId_required(f):
 # HOME
 @app.route('/', methods=["GET"])
 @userId_required
-@docache (15)
+@docache(15)
 def home(authDict):
     
     url = "https://rapidapi.p.rapidapi.com/product/search"
@@ -99,13 +99,13 @@ def home(authDict):
 
     dataResponse = response.json()
 
-    return jsonify(dataResponse)
+    return json.dumps(dataResponse)
 
 #=========================
 # SEARCH
 @app.route('/search', methods=["GET"])
 @userId_required
-@docache (15)
+@docache(15)
 def search(authDict):
 
     q = request.args.get('q', type=str, default=None)
@@ -134,14 +134,14 @@ def search(authDict):
     if dataResponse is None or dataResponse == {}:
         return Response(status=204)
 
-    return jsonify(dataResponse)
+    return json.dumps(dataResponse)
 
 #=========================
 
 # DETAILS
 @app.route('/product/<string:idStr>', methods=["GET"])
 @userId_required
-@docache (60)
+
 def details(authDict, idStr):
 
     url = "https://rapidapi.p.rapidapi.com/product/details"
@@ -185,7 +185,6 @@ def details(authDict, idStr):
 # REVIEWS
 @app.route('/reviews/<string:idStr>', methods=["GET"])
 @userId_required
-@docache (1)
 def reviews(authDict, idStr):
 
     page = request.args.get('page-number', type=int, default=1)
