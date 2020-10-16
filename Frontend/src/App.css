@@ -1,0 +1,35 @@
+:root {
+  --color-primary: rgb(19, 165, 116);
+  --color-secondary: rgb(255, 255, 255);
+  --color-primary-txt: rgb(39, 39, 39);
+  --border-radius: 0.2rem;
+}
+.App {
+  display: flex;
+  align-items: flex-start;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+button {
+  cursor: pointer;
+}
+.btn-transparent {
+  background: none;
+  border: none;
+  outline: none;
+}
+.btn-secondary {
+  background-color: var(--color-secondary);
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: large;
+  color: var(--color-primary-txt);
+  border-radius: var(--border-radius);
+  transition: 0.2s box-shadow;
+}
+.btn-secondary:hover {
+  box-shadow: 0px 0px 8px 0px var(--color-secondary);
+}

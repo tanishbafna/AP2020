@@ -8,6 +8,7 @@ from functools import wraps
 import json
 import os
 from flask_swagger_ui import get_swaggerui_blueprint
+from datetime import datetime, timedelta
 
 # Setting up Flask
 
@@ -18,7 +19,7 @@ app.config['SECRET_KEY'] = os.urandom(24)
 # Adding a CORS Policy
 CORS(app)
 
-pb = pyrebase.initialize_app(json.load(open('backend/fbconfig.json')))
+pb = pyrebase.initialize_app(json.load(open('fbconfig.json')))
 db = pb.database()
 
 APIKey=os.getenv('X-RapidAPI-Key')
@@ -37,6 +38,19 @@ swaggerui_blueprint = get_swaggerui_blueprint(
 
 app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
 
+def docache(minutes=5, content_type='application/json; charset=utf-8'):
+    """ Flask decorator that allow to set Expire and Cache headers. """
+    def fwrap(f):
+        @wraps(f)
+        def wrapped_f(*args, **kwargs):
+            r = f(*args, **kwargs)
+            then = datetime.now() + timedelta(minutes=minutes)
+            rsp = Response(r, content_type=content_type)
+            rsp.headers.add('Expires', then.strftime("%a, %d %b %Y %H:%M:%S GMT"))
+            rsp.headers.add('Cache-Control', 'public,max-age=%d' % int(60 * minutes))
+            return rsp
+        return wrapped_f
+    return fwrap
 #==============================
 
 # Token Auth
@@ -74,6 +88,7 @@ def userId_required(f):
 # HOME
 @app.route('/', methods=["GET"])
 @userId_required
+@docache (15)
 def home(authDict):
     
     url = "https://rapidapi.p.rapidapi.com/product/search"
@@ -84,12 +99,13 @@ def home(authDict):
 
     dataResponse = response.json()
 
-    return dataResponse
+    return jsonify(dataResponse)
 
 #=========================
 # SEARCH
 @app.route('/search', methods=["GET"])
 @userId_required
+@docache (15)
 def search(authDict):
 
     q = request.args.get('q', type=str, default=None)
@@ -118,13 +134,14 @@ def search(authDict):
     if dataResponse is None or dataResponse == {}:
         return Response(status=204)
 
-    return dataResponse
+    return jsonify(dataResponse)
 
 #=========================
 
 # DETAILS
 @app.route('/product/<string:idStr>', methods=["GET"])
 @userId_required
+@docache (60)
 def details(authDict, idStr):
 
     url = "https://rapidapi.p.rapidapi.com/product/details"
@@ -168,6 +185,7 @@ def details(authDict, idStr):
 # REVIEWS
 @app.route('/reviews/<string:idStr>', methods=["GET"])
 @userId_required
+@docache (1)
 def reviews(authDict, idStr):
 
     page = request.args.get('page-number', type=int, default=1)
