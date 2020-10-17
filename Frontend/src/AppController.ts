@@ -1,17 +1,18 @@
-import { ProductResult } from "./Types"
+import { Category, ProductResult } from "./Types"
 import querystring from 'querystring'
 
 export default class AppController {
     endpoint = 'http://localhost:5000'
 
-    async home (page: number = 1) {
-        const results = await this.fetchJSON ('/', 'GET')
+    async products (q?: string, page: number = 1, category?: string) {
+        const qStr = querystring.encode({ q, 'page-number': page, category })
+        const results = await this.fetchJSON ('/?' + qStr, 'GET')
         return results as ProductResult
     }
-    async search (q: string, page: number = 1, category?: string) {
-        const qStr = querystring.encode({ q, 'page-number': page, category })
-        const results = await this.fetchJSON ('/search/?' + qStr, 'GET')
-        return results as ProductResult
+    async categories () {
+        const results = await this.fetchJSON ('/categories', 'GET') as Category[]
+        results.forEach (r => r.name = r.name.replace ('Amazon', 'Ummazone'))
+        return results 
     }
 
     /** utility function to fetch JSON from service */

@@ -1,0 +1,20 @@
+.categories {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0.5rem;
+    background-color: var(--color-primary);
+    min-height: 5rem;
+}
+.categories .category {
+    color: var(--color-secondary);
+    margin: 0.2rem 0.8rem;
+    transition: 0.15s transform;
+}
+.categories .category:hover {
+    cursor: pointer;
+    transform: scale(1.07);
+}
+.categories .selected {
+    transform: scale(1.2);
+    font-weight: bold;
+}

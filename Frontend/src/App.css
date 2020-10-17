@@ -1,18 +1,23 @@
 :root {
   --color-primary: #DDA162;
   --color-secondary: rgb(255, 255, 255);
-  --color-secondary2: #c4b7a9;
+  --color-secondary2: #e7d8c8;
+  --color-tertiary:rgb(40, 202, 75);
   --color-primary-txt: rgb(39, 39, 39);
   --border-radius: 0.2rem;
 }
 .App {
   display: flex;
-  align-items: flex-start;
+  align-items: stretch;
+  flex-direction: column;
   position: absolute;
   left: 0;
   right: 0;
   top: 0;
   bottom: 0;
+}
+h4 {
+  font: Default;
 }
 button {
   cursor: pointer;
@@ -33,4 +38,17 @@ button {
 }
 .btn-secondary:hover {
   box-shadow: 0px 0px 8px 0px var(--color-secondary);
+}
+
+.btn-tertiary {
+  background-color: var(--color-tertiary);
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: large;
+  color: var(--color-secondary);
+  border-radius: var(--border-radius);
+  transition: 0.2s box-shadow;
+}
+.btn-tertiary:hover {
+  box-shadow: 0px 0px 8px 0px var(--color-tertiary);
 }

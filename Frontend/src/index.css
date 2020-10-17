@@ -2,7 +2,6 @@
   font-family: Default;
   src: url(/TenorSans-Regular.ttf);
 }
-
 body {
   margin: 0;
   font-family: Default;
@@ -11,9 +10,4 @@ body {
 }
 body * {
   font-family: Default;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
 }
