@@ -15,8 +15,6 @@ tags:
   description: All Cart Operations
 - name: Review Endpoints
   description: All Review Operations
-- name: Profile Endpoints
-  description: All User Operations
 
 paths:
   /:
@@ -192,8 +190,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/itemInCart'
-        204:
-          description: Empty
         400:
           description: Invalid status parameter
       security:
@@ -261,7 +257,7 @@ paths:
           description: Unauthorized
       security:
       - Bearer: []
-
+      
   /reviews/{asin}:
     put:
       tags:
@@ -283,75 +279,6 @@ paths:
       responses:
         200:
           description: Succesfully added review
-        400:
-          description: Bad input parameter
-          content: {}
-        401:
-          description: Unauthorized
-      security:
-      - Bearer: []
-  
-  /profile/new:
-    put:
-      tags:
-      - Profile Endpoints
-      summary: Add profile to database
-      operationId: addProfile
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/addProfile'
-        required: true
-      responses:
-        200:
-          description: Succesfully added profile
-        400:
-          description: Bad input parameter
-          content: {}
-        401:
-          description: Unauthorized
-      security:
-      - Bearer: []
-  
-  /profile:
-    get:
-      tags:
-        - Profile Endpoints
-      summary: View profile
-      operationId: viewProfile
-      responses:
-        200:
-          description: Profile model
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/profile'
-        401:
-          description: Unauthorized
-        404:
-          description: No such profile
-      security:
-      - Bearer: []
-  
-  /profile/edit:
-    patch:
-      tags:
-        - Profile Endpoints
-      summary: Edit profile
-      operationId: editProfile
-      requestBody:
-        content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/editProfile'
-      responses:
-        200:
-          description: Edited Profile model
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/profile'
         400:
           description: Bad input parameter
           content: {}
@@ -553,11 +480,15 @@ components:
     addReview:
       type: object
       required:
+      - id
       - name
       - rating
       - review
       - title
       properties:
+        id:
+          type: string
+          description: userId
         name:
           type: string
           description: userName
@@ -569,43 +500,7 @@ components:
           type: string
         title:
           type: string
-    
-    addProfile:
-      type: object
-      required:
-      - name
-      - address
-      properties:
-          name:
-            type: string
-          address:
-            type: string
-    
-    profile:
-      type: object
-      properties:
-          name:
-            type: string
-          address:
-            type: string
-          orders:
-            type: integer
-            minimum: 0
-          wishlist:
-            type: integer
-            minimum: 0
-          incart:
-            type: integer
-            minimum: 0
-    
-    editProfile:
-      type: object
-      properties:
-          name:
-            type: string
-          address:
-            type: string
-
+          
   securitySchemes:
     Bearer:
       type: apiKey

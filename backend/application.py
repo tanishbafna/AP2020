@@ -1,4 +1,4 @@
-from flask import Flask, request, Response, redirect
+from flask import Flask, request, jsonify, Response, redirect
 from flask_cors import CORS
 import requests
 import pyrebase
@@ -89,7 +89,7 @@ def userId_required(f):
 # HOME
 @app.route('/', methods=["GET"])
 @userId_required
-@docache(10)
+# @docache(1)
 def home(authDict):
 
     q = request.args.get('q', type=str, default=None)
@@ -157,13 +157,13 @@ def details(authDict, idStr):
         currentReviews = int(dataResponse.get('reviews').get('total_reviews'))
     except:
         dataResponse['reviews'] = reviewData
-        return json.dumps(dataResponse, indent=4)
+        return jsonify(dataResponse)
 
     if reviewAvailable:
         dataResponse['reviews']['total_reviews'] = reviewData['total_reviews'] + currentReviews
-        dataResponse['reviews']['rating'] = ((currentRating * currentReviews) + (reviewData['rating'] * reviewData['total_reviews'])) / (dataResponse['reviews']['total_reviews'])
+        dataResponse['reviews']['rating'] = ((currentRating * currentReviews) + reviewData['rating']) / (dataResponse['reviews']['total_reviews'])
 
-    return json.dumps(dataResponse, indent=4)
+    return jsonify(dataResponse)
 
 #=========================
 
@@ -202,21 +202,9 @@ def reviews(authDict, idStr):
         return Response(status=204)
     
     if reviewAvailable:
-        reviewList = []
-        reviewData = reviewData.pop('total_reviews')
-        reviewData = reviewData.pop('rating')
+        dataResponse['reviews'] = reviewData['comments'] + dataResponse['reviews']
 
-        if filterStar is None:
-            for v in reviewData.values():
-                reviewList.append(v)
-        else:
-            for v in reviewData.values():
-                if v['rating'] == filterStar:
-                    reviewList.append(v)
-    
-        dataResponse['reviews'] = reviewList + dataResponse['reviews']
-
-    return json.dumps(dataResponse, indent=4)
+    return jsonify(dataResponse)
 
 #=========================
 
@@ -235,7 +223,7 @@ def categories(authDict):
     for v in response.json().values():
         data.append(v)
     
-    return json.dumps(data, indent=4)
+    return json.dumps(data)
 
 #=========================
 # CART = WISHLIST, ORDERS, INCART
@@ -275,7 +263,7 @@ def cartAdd(authDict):
 
     data = db.child('userCart').child(userId).child(data.get('asin')).get().val()
 
-    return json.dumps(data, indent=4)
+    return jsonify(data)
 
 #=========================
 
@@ -290,16 +278,13 @@ def cartView(authDict, status):
         return Response(status=400)
 
     listResponse = []
-    data = db.child('userCart').child(userId).get().val()
+    data = db.child('userCart').child(userId).get().val() # currently sending back all
     
-    if data is None or data == {}:
-        return Response(status=204)
-
     for v in data.values():
         if v['status'] == status:
             listResponse.append(v)
 
-    return json.dumps(listResponse, indent=4)
+    return jsonify(listResponse)
 
 #=========================
 
@@ -335,7 +320,7 @@ def cartEdit(authDict, status, idStr):
 
     data = db.child('userCart').child(userId).child(idStr).get().val()
 
-    return json.dumps(data, indent=4)
+    return jsonify(data)
 
 #=========================
 
@@ -383,117 +368,11 @@ def addReview(authDict, idStr):
         return Response(response=v.errors, status=400)
 
     data['id'] = userId
+    db.child('reviews').child(idStr).child('comments').push(data)
 
     # also add verified purchase
 
-    try:
-        prevReviews = db.child('reviews').child(idStr).child('total_reviews').get().val()
-        prevRating = db.child('reviews').child(idStr).child('rating').get().val()
-    except:
-        # creating first entry
-        db.child('reviews').child(idStr).set({
-            'total_reviews': 1,
-            'rating': data['rating']
-        })
-        db.child('reviews').child(idStr).child(userId).set(data)
-
-        return Response(status=200)
-    
-    if prevRating is None or prevReviews is None:
-        # creating first entry
-        db.child('reviews').child(idStr).set({
-            'total_reviews': 1,
-            'rating': data['rating']
-        })
-        db.child('reviews').child(idStr).child(userId).set(data)
-
-        return Response(status=200)
-    
-    newRating = ((prevRating['rating'] * prevReviews['total_reviews']) + data['rating']) / (prevReviews['total_reviews'] + 1)
-    db.child('reviews').child(idStr).child(userId).set(data)
-    db.child('reviews').child(idStr).update({
-            'total_reviews': prevReviews['total_reviews'] + 1,
-            'rating': newRating
-    })
-
     return Response(status=200)
-
-#=========================
-# PROFILE SECTION
-#=========================
-
-# NEW USER GIVEN USERID
-@app.route('/profile/new', methods=["PUT"])
-@userId_required
-def addUser(authDict):
-
-    userId = authDict.get('userId')
-
-    data = request.get_json()
-    addSchema = {
-        "name": {'type':'string', 'required':True, 'empty':False, 'nullable':False},
-        "address": {'type':'string', 'required':True, 'empty':False, 'nullable':False}
-        }
-
-    if data is None:
-        return Response(response={'error': 'no data sent'}, status=400)
-    v = Validator(addSchema)
-    try:
-        if not v.validate(data):
-            print(v.errors)
-            return Response(status=400)
-    except:
-        return Response(response=v.errors, status=400)
-
-    data['orders'] = 0
-    data['wishlist'] = 0
-    data['incart'] = 0
-
-    db.child('userProfile').child(userId).set(data)
-
-    return Response(status=200)
-
-
-# VIEW PROFILE
-@app.route('/profile', methods=["GET"])
-@userId_required
-def viewUser(authDict):
-
-    userId = authDict.get('userId')
-    data = db.child('userProfile').child(userId).get().val()
-
-    if data is None or data == {}:
-        return Response(status=404)
-
-    return json.dumps(data, indent=4)
-
-# EDIT PROFILE
-@app.route('/profile/edit', methods=["PATCH"])
-@userId_required
-def editUser(authDict):
-
-    userId = authDict.get('userId')
-
-    data = request.get_json()
-    addSchema = {
-        "name": {'type':'string', 'required':False, 'empty':False, 'nullable':False},
-        "address": {'type':'string', 'required':False, 'empty':False, 'nullable':False}
-        }
-
-    if data is None:
-        return Response(response={'error': 'no data sent'}, status=400)
-    v = Validator(addSchema)
-    try:
-        if not v.validate(data):
-            print(v.errors)
-            return Response(status=400)
-    except:
-        return Response(response=v.errors, status=400)
-
-    db.child("userProfile").child(userId).update(data)
-    data = db.child('userProfile').child(userId).get().val()
-
-    return json.dumps(data, indent=4)
 
 #=========================
 if __name__ == "__main__":
