@@ -1,4 +1,4 @@
-import { Category, ProductResult } from "./Types"
+import { Cart, Category, Product, ProductFull, ProductResult } from "./Types"
 import querystring from 'querystring'
 
 export default class AppController {
@@ -9,12 +9,25 @@ export default class AppController {
         const results = await this.fetchJSON ('/?' + qStr, 'GET')
         return results as ProductResult
     }
+    async product (asin: string) {
+        const result = await this.fetchJSON ('/product/' + asin, 'GET')
+        return result as ProductFull
+    }
     async categories () {
         const results = await this.fetchJSON ('/categories', 'GET') as Category[]
         results.forEach (r => r.name = r.name.replace ('Amazon', 'Ummazone'))
         return results 
     }
 
+    cart (): Cart {
+        const items = localStorage.getItem ('cart')
+        if (!items) return {}
+
+        return JSON.parse (items)
+    }
+    saveCart (cart: Cart) {
+        localStorage.setItem ('cart', JSON.stringify(cart))
+    }
     /** utility function to fetch JSON from service */
     async fetchJSON (path: string, method: string, body?: any) {
         const response = await fetch (new URL(path, this.endpoint).toString(), {

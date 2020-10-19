@@ -14,6 +14,10 @@ export type Product = {
     reviews: { rating: number, total_reviews: number }
     url: string
 }
+export type ProductFull = Product & {
+    main_image: string
+    images: string[]
+}
 export type ProductResult = {
     next_page: number
     totalProducts: string
@@ -23,3 +27,4 @@ export type Category = {
     name: string
     category: string
 }
+export type Cart = { [k: string]: { quantity: number, product: Product } }

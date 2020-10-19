@@ -3,7 +3,8 @@
     flex-wrap: wrap;
     padding: 0.5rem;
     background-color: var(--color-primary);
-    min-height: 5rem;
+    min-height: 6rem;
+    box-shadow: 0px 0px 15px 0px rgb(161, 161, 161);
 }
 .categories .category {
     color: var(--color-secondary);
@@ -12,7 +13,7 @@
 }
 .categories .category:hover {
     cursor: pointer;
-    transform: scale(1.07);
+    transform: scale(1.2);
 }
 .categories .selected {
     transform: scale(1.2);

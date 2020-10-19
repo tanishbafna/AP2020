@@ -1,7 +1,7 @@
 import React, { useRef, useState, createContext, useEffect } from "react"
 import querystring from 'querystring'
 import AppController from "./AppController"
-import { Product, Category } from "./Types"
+import { Product, Category, Cart } from "./Types"
 import { createBrowserHistory } from 'history'
 const history = createBrowserHistory()
 
@@ -10,10 +10,20 @@ type StoreResult = {
     products: Product[]
     hasMore: boolean
     isLoading: boolean
+    openedProduct: string | undefined
+    setOpenedProduct: (product: string) => void
     updateFilters: (category?: string, q?: string) => Promise<void> 
     fetchMoreProducts: () => Promise<void>
+    cart: Cart
+    alterItemsInCart: (p: Product, q?: number) => void
 }
 
+export const getCurrentProduct = () => {
+    const path = window.location.pathname.slice (1)
+    const [ category, productID ] = path.split ('/')
+    if (category !== 'product') return
+    return productID
+}
 export const getCurrentCategory = () => {
     const path = window.location.pathname.slice (1)
     const [ category ] = path.split ('/')
@@ -30,6 +40,10 @@ export const getSearchQ = () => {
 
 const useStore = () => {
     const controller = new AppController ()
+
+    const [openedProduct, _setOpenedProduct] = useState (getCurrentProduct())
+
+    const [cart, setCart] = useState (controller.cart())
 
     const [categories, setCategories] = useState ([] as Category[])
 
@@ -55,6 +69,17 @@ const useStore = () => {
         setCategories (result)
     }
 
+    const alterItemsInCart = (product: Product, q: number = 1) => {
+        const id = product.asin
+        if (!cart[id]) cart[id] = { quantity: 0, product }
+        cart[id].quantity += q
+
+        if (cart[id].quantity <= 0) delete cart[id]
+
+        controller.saveCart (cart)
+        setCart ({ ...cart })
+    }
+
     useEffect (() => {
         fetchCategories ()
         fetchProducts ()
@@ -64,13 +89,21 @@ const useStore = () => {
         products,
         hasMore,
         isLoading,
+        openedProduct,
+        setOpenedProduct: (product: string) => {
+            _setOpenedProduct (product)
+            history.push (`/product/${product}`)
+        },
         updateFilters: (category?: string, q?: string) => {
             page.current = 1
             history.push (`/${category || getCurrentCategory() || ''}${ q ? `?q=${q}` : '' }`)
             setProducts ([])
+            _setOpenedProduct (undefined)
             return fetchProducts ()
         },
-        fetchMoreProducts: () => fetchProducts (products)
+        cart,
+        fetchMoreProducts: () => fetchProducts (products),
+        alterItemsInCart,
     }
 }
 export const StoreContext = createContext ({} as StoreResult)

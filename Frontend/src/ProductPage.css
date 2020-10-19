@@ -1,0 +1,15 @@
+.product-full {
+    padding: 0.5rem 0.75rem;   
+}
+.product-full .header {
+    background-color: var(--color-secondary);
+    display: flex;
+    justify-content: space-between;
+}
+.product-full .header > .inner .price-display {
+    font-size: 1.5rem;
+    margin-right: 0.5rem;
+}
+.product-full .header > .inner {
+    display: flex;
+}

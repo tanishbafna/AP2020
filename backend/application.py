@@ -88,14 +88,13 @@ def userId_required(f):
 
 # HOME
 @app.route('/', methods=["GET"])
-@userId_required
 @docache(20)
-def home(authDict):
+def home():
 
     q = request.args.get('q', type=str, default=None)
 
     if q is None or q.isspace() or q == '':
-        q = 'a'#random.choice(['a','s','p'])
+        q = 'e'#random.choice(['a','s','p'])
 
     q = q.strip()
 
@@ -124,8 +123,8 @@ def home(authDict):
 
 # DETAILS
 @app.route('/product/<string:idStr>', methods=["GET"])
-@userId_required
-def details(authDict, idStr):
+@docache(60)
+def details(idStr):
 
     url = "https://rapidapi.p.rapidapi.com/product/details"
     querystring = {"asin":idStr,"country":country}
@@ -167,8 +166,7 @@ def details(authDict, idStr):
 
 # REVIEWS
 @app.route('/reviews/<string:idStr>', methods=["GET"])
-@userId_required
-def reviews(authDict, idStr):
+def reviews(idStr):
 
     page = request.args.get('page-number', type=int, default=1)
     if page < 1:
@@ -219,9 +217,8 @@ def reviews(authDict, idStr):
 #=========================
 
 @app.route('/categories', methods=["GET"])
-@userId_required
 @docache(30)
-def categories(authDict):
+def categories():
 
     url = "https://rapidapi.p.rapidapi.com/categories"
     querystring = {"country":country}

@@ -94,7 +94,14 @@ export default () => {
                             <div className='item'>
                                 <div className='inner'>
                                     <img src={ product.thumbnail } />
-                                    { product.title }
+                                    <span 
+                                        className='product-title' 
+                                        onClick={ () => {
+                                            store.setOpenedProduct(product.asin)
+                                            setCancelledSearch (true)
+                                        } }>
+                                            { product.title }
+                                    </span>
                                 </div>
                                 <ReactStars count={5} edit='false' value={product.reviews.rating} />
                             </div>

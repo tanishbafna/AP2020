@@ -4,10 +4,29 @@ import { Product } from './Types'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import ReactStars from "react-rating-stars-component"
 import { FadeLoader } from 'react-spinners'
-
 import './Products.css'
+import ProductPage from './ProductPage'
+
+export const ProductPrice = ({product}: { product: Product }) => (
+    <div className='price-display'>
+        ₹{ product.price.current_price } 
+        &nbsp;{ product.price.discounted && <span className='cancelled-price'>₹{ product.price.before_price }</span> }
+    </div>
+)
+export const ProductButtons = (props: { addToCart: () => void, buyNow: () => void }) => (
+    <>
+    <button className='btn btn-tertiary' onClick={ props.buyNow }>
+        Buy Now
+    </button> 
+    <button className='btn btn-secondary' onClick={ props.addToCart }>
+        Add to Cart
+    </button> 
+    </>
+)
 
 const ProductPreview = ({product}: { product: Product }) => {
+    const {alterItemsInCart, setOpenedProduct} = useContext (StoreContext)
+
     return (
         <div className='product-preview'>
             {
@@ -19,21 +38,13 @@ const ProductPreview = ({product}: { product: Product }) => {
             <img src={ product.thumbnail } />
             <div className='inner'>
                 <div className='inner2'>
-                    <span className='product-title'>{ product.title.slice(0, 50) }</span>
-                    <ReactStars total={5} value={product.reviews.rating} edit={false}/>
-                </div>
-                <div>
-                    ₹{ product.price.current_price } 
-                    &nbsp;{ product.price.discounted && <span style={{ textDecoration: 'line-through', color: 'gray', fontStyle: 'italic' }}>₹{ product.price.before_price }</span> }
+                    <span className='product-title' onClick={ () => setOpenedProduct(product.asin) }>{ product.title.slice(0, 50) }</span>
+                    <ReactStars style={{flexGrow: '1'}} total={5} value={product.reviews.rating} edit={false}/>
                 </div>
                 
+                <ProductPrice product={product}/>
                 <div className='inner2'> 
-                    <button className='btn btn-tertiary'>
-                        Buy Now
-                    </button> 
-                    <button className='btn btn-secondary'>
-                        Add to Cart
-                    </button> 
+                    <ProductButtons addToCart={ () => alterItemsInCart (product, 1) } buyNow={ () => {} }/>
                 </div>
             </div>
         </div>
@@ -41,7 +52,11 @@ const ProductPreview = ({product}: { product: Product }) => {
 }
 
 export default () => {
-    const { products, isLoading, fetchMoreProducts, hasMore } = useContext (StoreContext)
+    const { products, isLoading, fetchMoreProducts, hasMore, openedProduct } = useContext (StoreContext)
+    
+    if (openedProduct) {
+        return <ProductPage productID={openedProduct}/>
+    }
     
     return (
         <div className='products' id='product-list'>

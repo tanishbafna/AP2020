@@ -1,8 +1,27 @@
-
-
-import React from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import SearchBar from './SearchBar'
+import Cart from './Cart'
+import {ReactComponent as UserIcon} from './Images/User.svg'
 import './Header.css'
+import Login from './Login'
+
+const User = () => {
+    const [state, setState] = useState ('unauthenticated')
+    const [openedLogin, setOpenedLogin] = useState (false)
+
+    const userButtonClicked = () => {
+        setOpenedLogin (true)
+    }
+
+    return (
+        <div>
+            <button className='btn-transparent' style={{height: '2.5rem'}} onClick={ userButtonClicked }>
+                { openedLogin && <Login /> }
+                <UserIcon style={{ fill: 'var(--color-secondary)' }}/>
+            </button>
+        </div>
+    )
+}
 
 export default function () {
     return (
@@ -11,9 +30,8 @@ export default function () {
                 <a href='/'> UMMAZONE </a>
             </span>
             <SearchBar />
-            <button className='btn-secondary' style={{height: '2.5rem'}}>
-                Login
-            </button>
+            <User />
+            <Cart />
         </div>
     )
 }
