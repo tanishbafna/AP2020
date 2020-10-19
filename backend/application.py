@@ -48,7 +48,9 @@ def docache(minutes=5, content_type='application/json; charset=utf-8'):
             then = datetime.now() + timedelta(minutes=minutes)
             rsp = Response(r, content_type=content_type)
             rsp.headers.add('Expires', then.strftime("%a, %d %b %Y %H:%M:%S GMT"))
-            rsp.headers.add('Cache-Control', 'public,max-age=%d' % int(60 * minutes))
+            rsp.headers.add('Cache-Control', 'public')
+            rsp.headers.add('Cache-Control', 'max-age=%d' % int(60 * minutes))
+            rsp.headers.add('Vary', '')
             return rsp
         return wrapped_f
     return fwrap
@@ -166,6 +168,7 @@ def details(idStr):
 
 # REVIEWS
 @app.route('/reviews/<string:idStr>', methods=["GET"])
+@docache(2)
 def reviews(idStr):
 
     page = request.args.get('page-number', type=int, default=1)

@@ -1,7 +1,7 @@
 import React, { useRef, useState, createContext, useEffect } from "react"
 import querystring from 'querystring'
 import AppController from "./AppController"
-import { Product, Category, Cart } from "./Types"
+import { Product, Category, Cart, Review } from "./Types"
 import { createBrowserHistory } from 'history'
 const history = createBrowserHistory()
 
@@ -116,4 +116,31 @@ export const StoreContextMaker = (props: React.PropsWithChildren<{}>) => {
             { props.children }
         </StoreContext.Provider>
     )
+}
+
+export const useReviewsStore = (product: string) => {
+    const controller = new AppController ()
+
+    const [reviews, setReviews] = useState ([] as Review[])
+    const [hasMore, setHasMore] = useState (true)
+    
+    const page = useRef (1)
+
+    const fetchReviews = async (reviews: Review[] = []) => {
+        const result = await controller.reviews (product, page.current)
+        setReviews ([ ...(reviews || []), ...(result?.reviews || []) ])
+
+        page.current = result.next_page
+        setHasMore (!!result.next_page)
+    }
+
+    useEffect (() => {
+        fetchReviews ()
+    }, [ product ])
+
+    return {
+        reviews,
+        hasMore,
+        fetchMoreReviews: () => fetchReviews (reviews),
+    }
 }

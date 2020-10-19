@@ -65,8 +65,7 @@ export default () => {
                 dataLength={products.length}
                 next={fetchMoreProducts}
                 hasMore={hasMore}
-                loader={undefined}
-                >
+                loader={undefined}>
                 {
                     products.map (product => (
                         <ProductPreview key={product.asin} product={product} />

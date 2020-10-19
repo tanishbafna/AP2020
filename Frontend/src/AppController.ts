@@ -1,4 +1,4 @@
-import { Cart, Category, Product, ProductFull, ProductResult } from "./Types"
+import { Cart, Category, Product, ProductFull, ProductResult, ReviewResult } from "./Types"
 import querystring from 'querystring'
 
 export default class AppController {
@@ -12,6 +12,10 @@ export default class AppController {
     async product (asin: string) {
         const result = await this.fetchJSON ('/product/' + asin, 'GET')
         return result as ProductFull
+    }
+    async reviews (asin: string, page: number = 1) {
+        const result = await this.fetchJSON ('/reviews/' + asin + '?page-number=' + page, 'GET')
+        return result as ReviewResult
     }
     async categories () {
         const results = await this.fetchJSON ('/categories', 'GET') as Category[]

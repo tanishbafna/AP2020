@@ -16,6 +16,7 @@ export type Product = {
 }
 export type ProductFull = Product & {
     main_image: string
+    description: string
     images: string[]
 }
 export type ProductResult = {
@@ -26,5 +27,18 @@ export type ProductResult = {
 export type Category = {
     name: string
     category: string
+}
+export type Review = {
+    id: string
+    name: string
+    rating: number
+    review: string
+    review_data: string
+    title: string
+    verified_purchase: boolean
+}
+export type ReviewResult = {
+    next_page: number
+    reviews: Review[]
 }
 export type Cart = { [k: string]: { quantity: number, product: Product } }
