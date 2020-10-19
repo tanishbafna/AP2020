@@ -3,6 +3,8 @@ export type Product = {
     asin: string
     thumbnail: string
     title: string
+    amazonPrime: boolean
+    amazonChoice: boolean
     price: {
         discounted: boolean
         savings_amount: number
@@ -17,7 +19,12 @@ export type Product = {
 export type ProductFull = Product & {
     main_image: string
     description: string
+    item_available: boolean
     images: string[]
+    badges: {
+        amazon_prime: boolean
+        'amazon_\u0441hoice': boolean
+    }
 }
 export type ProductResult = {
     next_page: number
@@ -42,3 +49,4 @@ export type ReviewResult = {
     reviews: Review[]
 }
 export type Cart = { [k: string]: { quantity: number, product: Product } }
+export type Wishlist = { [k: string]: Product }

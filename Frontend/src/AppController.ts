@@ -1,4 +1,4 @@
-import { Cart, Category, Product, ProductFull, ProductResult, ReviewResult } from "./Types"
+import { Cart, Category, ProductFull, ProductResult, ReviewResult, Wishlist } from "./Types"
 import querystring from 'querystring'
 
 export default class AppController {
@@ -31,6 +31,15 @@ export default class AppController {
     }
     saveCart (cart: Cart) {
         localStorage.setItem ('cart', JSON.stringify(cart))
+    }
+    wishlist (): Wishlist {
+        const items = localStorage.getItem ('wishlist')
+        if (!items) return {}
+
+        return JSON.parse (items)
+    }
+    saveWishlist (cart: Wishlist) {
+        localStorage.setItem ('wishlist', JSON.stringify(cart))
     }
     /** utility function to fetch JSON from service */
     async fetchJSON (path: string, method: string, body?: any) {

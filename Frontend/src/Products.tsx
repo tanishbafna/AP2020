@@ -4,6 +4,7 @@ import { Product } from './Types'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import ReactStars from "react-rating-stars-component"
 import { FadeLoader } from 'react-spinners'
+import {ReactComponent as CheckIcon} from './Images/Check.svg'
 import './Products.css'
 import ProductPage from './ProductPage'
 
@@ -13,22 +14,28 @@ export const ProductPrice = ({product}: { product: Product }) => (
         &nbsp;{ product.price.discounted && <span className='cancelled-price'>₹{ product.price.before_price }</span> }
     </div>
 )
-export const ProductButtons = (props: { addToCart: () => void, buyNow: () => void }) => (
-    <>
-    <button className='btn btn-tertiary' onClick={ props.buyNow }>
-        Buy Now
-    </button> 
-    <button className='btn btn-secondary' onClick={ props.addToCart }>
-        Add to Cart
-    </button> 
-    </>
-)
-
-const ProductPreview = ({product}: { product: Product }) => {
+export const ProductButtons = (props: { product: Product }) => {
+    const { alterItemsInCart, alterItemsInWishlist } = useContext (StoreContext)
+    return (
+        <>
+        <button className='btn btn-tertiary' onClick={ () => {} }>
+            Buy Now
+        </button> 
+        <button className='btn btn-secondary' onClick={ () => alterItemsInCart (props.product, 1) }>
+            Add to Cart
+        </button> 
+        <button className='btn btn-secondary' onClick={ () => alterItemsInWishlist (props.product, 'add') }>
+            Add to Wishlist
+        </button> 
+        </>
+    )
+}
+export const ProductPreview = ({product}: { product: Product }) => {
     const {alterItemsInCart, setOpenedProduct} = useContext (StoreContext)
 
     return (
         <div className='product-preview'>
+            { (product.amazonChoice || product.amazonPrime) && <CheckIcon className='verify'/> }
             {
                 product.price.savings_percent > 0 &&
                 <div className='savings'>
@@ -44,7 +51,7 @@ const ProductPreview = ({product}: { product: Product }) => {
                 
                 <ProductPrice product={product}/>
                 <div className='inner2'> 
-                    <ProductButtons addToCart={ () => alterItemsInCart (product, 1) } buyNow={ () => {} }/>
+                    <ProductButtons product={product}/>
                 </div>
             </div>
         </div>

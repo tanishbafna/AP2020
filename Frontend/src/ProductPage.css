@@ -75,3 +75,12 @@
     margin: 0;
     padding: 0;
 }
+.recommendation-list {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow: scroll;
+}
+.recommendation-list > * {
+    width: 15rem;
+    flex-shrink: 0;
+}

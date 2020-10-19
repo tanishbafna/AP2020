@@ -1,3 +1,10 @@
+.verify {
+    position: absolute;
+    top: 0.3rem;
+    left: 0.3rem;
+    width: 1.5rem;
+    height: 1.5rem;
+}
 .products {
     overflow: scroll;
     padding: 0.5rem;
@@ -14,7 +21,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    width: 16rem;
+    width: 17rem;
     min-height: 30rem;
     margin: 0.45rem;
     padding: 0.5rem;

@@ -1,7 +1,7 @@
 import React, { useRef, useState, createContext, useEffect } from "react"
 import querystring from 'querystring'
 import AppController from "./AppController"
-import { Product, Category, Cart, Review } from "./Types"
+import { Product, Category, Cart, Review, Wishlist } from "./Types"
 import { createBrowserHistory } from 'history'
 const history = createBrowserHistory()
 
@@ -11,11 +11,15 @@ type StoreResult = {
     hasMore: boolean
     isLoading: boolean
     openedProduct: string | undefined
+    cart: Cart
+    wishlist: Wishlist
+
     setOpenedProduct: (product: string) => void
     updateFilters: (category?: string, q?: string) => Promise<void> 
     fetchMoreProducts: () => Promise<void>
-    cart: Cart
     alterItemsInCart: (p: Product, q?: number) => void
+    alterItemsInWishlist: (p: Product, action: 'add' | 'remove') => void
+    moveItemToWishlist: (p: Product) => void
 }
 
 export const getCurrentProduct = () => {
@@ -44,6 +48,7 @@ const useStore = () => {
     const [openedProduct, _setOpenedProduct] = useState (getCurrentProduct())
 
     const [cart, setCart] = useState (controller.cart())
+    const [wishlist, setWishlist] = useState (controller.wishlist())
 
     const [categories, setCategories] = useState ([] as Category[])
 
@@ -79,6 +84,18 @@ const useStore = () => {
         controller.saveCart (cart)
         setCart ({ ...cart })
     }
+    const alterItemsInWishlist = (product: Product, action: 'add' | 'remove') => {
+        const id = product.asin
+        if (action === 'add') wishlist[id] = product
+        else delete wishlist[id]
+        
+        controller.saveWishlist (wishlist)
+        setWishlist ({ ...wishlist })
+    }
+    const moveItemToWishlist = (product: Product) => {
+        alterItemsInCart (product, -cart[product.asin].quantity)
+        alterItemsInWishlist (product, 'add')
+    }
 
     useEffect (() => {
         fetchCategories ()
@@ -102,8 +119,11 @@ const useStore = () => {
             return fetchProducts ()
         },
         cart,
+        wishlist,
         fetchMoreProducts: () => fetchProducts (products),
         alterItemsInCart,
+        alterItemsInWishlist,
+        moveItemToWishlist
     }
 }
 export const StoreContext = createContext ({} as StoreResult)
@@ -131,7 +151,7 @@ export const useReviewsStore = (product: string) => {
         setReviews ([ ...(reviews || []), ...(result?.reviews || []) ])
 
         page.current = result.next_page
-        setHasMore (!!result.next_page)
+        setHasMore (result.reviews.length > 0)
     }
 
     useEffect (() => {

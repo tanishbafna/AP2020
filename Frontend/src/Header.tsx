@@ -4,6 +4,7 @@ import Cart from './Cart'
 import {ReactComponent as UserIcon} from './Images/User.svg'
 import './Header.css'
 import Login from './Login'
+import Wishlist from './Wishlist'
 
 const User = () => {
     const [state, setState] = useState ('unauthenticated')
@@ -12,7 +13,6 @@ const User = () => {
     const userButtonClicked = () => {
         setOpenedLogin (true)
     }
-
     return (
         <div>
             <button className='btn-transparent' style={{height: '2.5rem'}} onClick={ userButtonClicked }>
@@ -32,6 +32,7 @@ export default function () {
             <SearchBar />
             <User />
             <Cart />
+            <Wishlist />
         </div>
     )
 }

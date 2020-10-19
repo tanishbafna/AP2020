@@ -18,7 +18,7 @@ const CartItem = ({item}: { item: { quantity: number, product: Product } }) => {
             <img src={item.product.thumbnail} />
 
             <div className='inner'>
-                <b>{item.product.title}</b>
+                <a href={'/product/' + item.product.asin }>{item.product.title}</a>
                 <span className='quantity'> 
                     Quantity: <input defaultValue={item.quantity} type="number" name='quantity' step='1' onChange={ e => alterItemsInCart(item.product, +(e.target.value)-item.quantity) }/> 
                 </span> 

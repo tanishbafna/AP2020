@@ -17,9 +17,12 @@
     background-color: var(--color-secondary);
     box-shadow: 0px 0px 5px 2px var(--color-secondary2);
     transition: 0.3s opacity;
+
+    z-index: 2;
 }
 .overlay {
     position: fixed;
+    z-index: 1;
     left: 0;
     right: 0;
     top: 0;
@@ -48,8 +51,16 @@
     border-radius: var(--border-radius);
 
     display: flex;
+    align-items: center;
 
     color: var(--color-primary-txt);
+}
+.cart-menu .item a {
+    text-decoration: none;
+    color: var(--color-primary-txt);
+}
+.cart-menu .item a:hover {
+    text-decoration: underline;
 }
 .cart-menu .item .inner {
     display: flex;
