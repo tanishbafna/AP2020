@@ -9,6 +9,8 @@ servers:
 - url: http://127.0.0.1:5000/
 
 tags:
+- name: User Endpoints
+  description: All User Operations
 - name: Amazon Data
   description: Amazon API
 - name: Cart Endpoints
@@ -17,10 +19,98 @@ tags:
   description: All Review Operations
 
 paths:
-  /:
+  /signup:
+    post:
+      tags:
+      - User Endpoints
+      summary: New signup
+      operationId: signup
+      requestBody:
+        required: True
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+                name:
+                  type: string
+                address:
+                  type: string
+              required:
+                - name
+                - email
+                - password
+                - address
+      responses:
+        200:
+          description: Succesfully added user. Returns access token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  idToken:
+                    type: string
+        400:
+          description: Bad input
+          content: {}
+        401:
+          description: User already exists or Unauthorized
+  
+  /login:
+    post:
+      tags:
+      - User Endpoints
+      summary: Login with email and password
+      operationId: login
+      requestBody:
+        required: True
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+                - email
+                - password
+      responses:
+        200:
+          description: Succesfully logged in
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  idToken:
+                    type: string
+        400:
+          description: Bad input
+          content: {}
+        401:
+          description: Unauthorized
+    
+  /logout:
     get:
+      tags:
+        - User Endpoints
+      summary: Logout and revoke tokens
+      operationId: logout
+      responses:
+        200:
+          description: Succesfully logged out and revoked tokens
       security:
       - Bearer: []
+
+  /:
+    get:
       tags:
       - Amazon Data
       summary: Homepage and Query for products
@@ -57,8 +147,6 @@ paths:
 
   /product/{asin}:
     get:
-      security:
-      - Bearer: []
       tags:
       - Amazon Data
       summary: Get info for <asin> product
@@ -84,8 +172,6 @@ paths:
           
   /reviews/{asin}/:
     get:
-      security:
-      - Bearer: []
       tags:
       - Amazon Data
       summary: Get reviews for <asin> product
@@ -125,8 +211,6 @@ paths:
     
   /categories:
     get:
-      security:
-      - Bearer: []
       tags:
       - Amazon Data
       summary: Categories of products

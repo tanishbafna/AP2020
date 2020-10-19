@@ -5,6 +5,8 @@ import pyrebase
 from dotenv import load_dotenv; load_dotenv()
 from cerberus import Validator
 from functools import wraps
+import firebase_admin
+from firebase_admin import auth, credentials
 import json
 import os
 from flask_swagger_ui import get_swaggerui_blueprint
@@ -20,8 +22,13 @@ app.config['SECRET_KEY'] = os.urandom(24)
 # Adding a CORS Policy
 CORS(app)
 
-pb = pyrebase.initialize_app(json.load(open('fbconfig.json')))
+pb = pyrebase.initialize_app(json.load(open('backend/fbconfig.json')))
 db = pb.database()
+authCnx = pb.auth()
+
+# Admin SDK
+cred = credentials.Certificate(json.load(open('backend/fbAdminConfig.json')))
+default_app = firebase_admin.initialize_app(cred)
 
 APIKey=os.getenv('X-RapidAPI-Key')
 country = "IN"
@@ -61,20 +68,16 @@ def userId_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
 
-        token = None
-        if 'Authorization' in request.headers:
+        try:
             token = request.headers['Authorization']
-            try:
-                token = token.split('Bearer ')[1]
-            except:
-                return Response(status=401)
-        
-        if not token:
+            token = token.split('Bearer ')[1]
+        except:
             return Response(status=401)
 
         # Obtaining userID using token
         try:
-            userId = token
+            decodeToken = auth.verify_id_token(token)
+            userId = decodeToken['uid']
         except:
             return Response(status=401)
         
@@ -421,21 +424,31 @@ def addReview(authDict, idStr):
 #=========================
 
 # NEW USER GIVEN USERID
-@app.route('/profile/new', methods=["PUT"])
-@userId_required
-def addUser(authDict):
+@app.route('/signup', methods=["POST"])
+def addUser():
 
-    userId = authDict.get('userId')
+    try:
+        email = request.form["email"]
+        password = request.form["password"]
+        name = request.form["name"]
+        address = request.form["address"]
+    except:
+        return Response(status=400)
 
-    data = request.get_json()
+    data = {}
+    data['name'] = name
+    data['address'] = address
+    data['orders'] = 0
+    data['wishlist'] = 0
+    data['incart'] = 0
+
     addSchema = {
         "name": {'type':'string', 'required':True, 'empty':False, 'nullable':False},
         "address": {'type':'string', 'required':True, 'empty':False, 'nullable':False}
         }
 
-    if data is None:
-        return Response(response={'error': 'no data sent'}, status=400)
     v = Validator(addSchema)
+    v.allow_unknown = True
     try:
         if not v.validate(data):
             print(v.errors)
@@ -443,14 +456,43 @@ def addUser(authDict):
     except:
         return Response(response=v.errors, status=400)
 
-    data['orders'] = 0
-    data['wishlist'] = 0
-    data['incart'] = 0
+    try:
+        user = authCnx.create_user_with_email_and_password(email, password)
+        userId = user['localId']
+    except:
+        return Response(status=401)
 
+    # Creating db entry for user
     db.child('userProfile').child(userId).set(data)
 
-    return Response(status=200)
+    return json.dumps({'idToken':user['idToken']})
 
+# LOGIN ROUTE
+@app.route('/login', methods=["POST"])
+def login():
+
+    try:
+        email = request.form["email"]
+        password = request.form["password"]
+    except:
+        return Response(status=400)
+
+    try:
+        user = authCnx.sign_in_with_email_and_password(email, password)
+        user = authCnx.refresh(user['refreshToken'])
+    except:
+        return Response(status=401)
+
+    return json.dumps({'idToken':user['idToken']})
+
+# LOGOUT ROUTE
+@app.route('/logout', methods=["GET"])
+@userId_required
+def logout(authDict):
+
+    userId = authDict.get('userId')
+    auth.revoke_refresh_tokens(userId)
+    return Response(status=200)
 
 # VIEW PROFILE
 @app.route('/profile', methods=["GET"])
