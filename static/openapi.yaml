@@ -71,9 +71,9 @@ paths:
       operationId: GoogleSignup
       responses:
         200:
-          description: Succesfully added user in DB.
-        401:
-          description: User already exists or Unauthorized
+          description: Succesfully added user in DB or user already exists in DB.
+      security:
+      - Bearer: []
   
   /api/login:
     post:

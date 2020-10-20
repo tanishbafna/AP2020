@@ -87,7 +87,7 @@ def userId_required(f):
         except:
             return Response(status=401)
         
-        authDict = {'userId':userId, 'token':request.headers['Authorization']}
+        authDict = {'userId':userId, 'token':token}
 
         return f(authDict, *args, **kwargs)
 
@@ -502,34 +502,15 @@ def addGUser(authDict):
     userId = authDict.get('userId')
     existing = db.child('userProfile').child(userId).get().val()
 
-    print(existing)
-
-    try:
-        print(authCnx.get_account_info(authDict['token']))
-        name = authCnx.get_account_info(authDict['token'])
-    except:
-        return Response(status=401)
+    if existing is None: # if user already exists
+        return Response(status=200)
 
     data = {}
-    data['name'] = name
-    data['address'] = 'None'
+    data['name'] = 'Not Provided'
+    data['address'] = 'Not Provided'
     data['orders'] = 0
     data['wishlist'] = 0
     data['incart'] = 0
-
-    addSchema = {
-        "name": {'type':'string', 'required':True, 'empty':False, 'nullable':False},
-        "address": {'type':'string', 'required':True, 'empty':False, 'nullable':False}
-        }
-
-    v = Validator(addSchema)
-    v.allow_unknown = True
-    try:
-        if not v.validate(data):
-            print(v.errors)
-            return Response(status=400)
-    except:
-        return Response(response=v.errors, status=400)
 
     # Creating db entry for user
     db.child('userProfile').child(userId).set(data)
