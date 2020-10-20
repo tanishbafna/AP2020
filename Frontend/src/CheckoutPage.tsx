@@ -5,7 +5,7 @@ import ProgressButton from './ProgressButton'
 import AppController from './AppController'
 import Login from './Login'
 
-export default (props: { cart: CartItem[], dismiss: () => void }) => {
+export default (props: { cart: CartItem[], dismiss: (checkedOut: boolean) => void }) => {
     const controller = new AppController ()
     const [cart, setCart] = useState (JSON.parse(JSON.stringify(props.cart)) as CartItem[])
     const [openedLogin, setOpenedLogin] = useState (false)
@@ -30,11 +30,11 @@ export default (props: { cart: CartItem[], dismiss: () => void }) => {
         )
         
         window.alert ('Orders placed successfully!\nAn elf will deliver them soon.')
-        props.dismiss ()
+        props.dismiss (true)
     }
 
     return (
-        <div className='overlay flex-center' onClick={ props.dismiss }>
+        <div className='overlay flex-center' onClick={ () => props.dismiss(false) }>
             <Login open={openedLogin} dismiss={ () => { setOpenedLogin(false); if (controller.isLoggedIn()) buttonRef.current.onClick() } }/>
             <div className='checkout' onClick={ e => e.stopPropagation() }>
                 <h1>Checkout</h1>

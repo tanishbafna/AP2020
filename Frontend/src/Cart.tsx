@@ -33,7 +33,7 @@ const CartItem = ({item}: { item: { quantity: number, product: Product } }) => {
 }
 
 export default () => {
-    const {cart} = useContext (StoreContext)
+    const {cart, clearCart} = useContext (StoreContext)
     const [openCart, setOpenCart] = useState (false)
     const [openCheckout, setOpenCheckout] = useState (false)
 
@@ -53,7 +53,7 @@ export default () => {
 
     return (
         <div>
-            { openCheckout && <CheckoutPage cart={Object.values(cart)} dismiss={ () => setOpenCheckout(false) } /> }
+            { openCheckout && <CheckoutPage cart={Object.values(cart)} dismiss={ c => { setOpenCheckout(false); if (c) clearCart() } } /> }
             <button className='btn-transparent' style={{height: '2.5rem'}} onClick={ () => setOpenCart(!openCart) }>
                 <CartIcon style={{ fill: 'var(--color-secondary)' }}/>
                 <div className='counter'>

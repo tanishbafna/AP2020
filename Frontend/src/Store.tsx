@@ -20,6 +20,7 @@ type StoreResult = {
     alterItemsInCart: (p: Product, q?: number) => void
     alterItemsInWishlist: (p: Product, action: 'add' | 'remove') => void
     moveItemToWishlist: (p: Product) => void
+    clearCart: () => void
 }
 
 export const getCurrentProduct = () => {
@@ -123,7 +124,8 @@ const useStore = () => {
         fetchMoreProducts: () => fetchProducts (products),
         alterItemsInCart,
         alterItemsInWishlist,
-        moveItemToWishlist
+        moveItemToWishlist,
+        clearCart: () => { setCart({}); controller.saveCart({}) }
     }
 }
 export const StoreContext = createContext ({} as StoreResult)

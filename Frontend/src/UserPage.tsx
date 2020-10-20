@@ -1,8 +1,31 @@
 import React, { useEffect, useState } from 'react'
 import { FadeLoader } from 'react-spinners'
 import AppController from "./AppController"
-import { Order, User } from './Types'
+import { Order, User, ProductFull } from './Types'
 import './UserPage.css'
+
+const OrderItem = ({ order }: { order: Order }) => {
+    const controller = new AppController ()
+    const [product, setProduct] = useState (undefined as any as ProductFull)
+
+    useEffect (() => {
+        controller.product (order.asin)
+        .then (setProduct)
+    }, [ order.asin ])
+
+    return (
+        <div className='order-row'>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+                <img src={product?.main_image} />
+                { order.name }
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', textAlign: 'right' }}>
+                x{order.quantity}<br/>
+                ₹{(+order.quantity*+order.price).toString()}
+            </div>
+        </div>
+    )
+}
 
 export default () => {
     const controller = new AppController ()
@@ -33,18 +56,16 @@ export default () => {
                 <hr/>
                 <div className='section'>
                     <h2>My Address</h2>
+                    <hr/>
                     <input defaultValue={user.address} type='textarea' placeholder='enter your address here'/>
                 </div>
 
                 <div className='section'>
                     <h2>My Orders</h2>
-                    <div>
+                    <hr/>
+                    <div className='order-list'>
                         {
-                            orders.map ((order, i) => (
-                                <div key={i}>
-                                    { order.name }
-                                </div>
-                            ))
+                            orders.map ((order, i) => <OrderItem order={order} key={i}/>)
                         }
                     </div>
                 </div>
