@@ -6,6 +6,8 @@ info:
   version: 1.0.0
 
 servers:
+- url: https://ummazone.herokuapp.com/
+- url: http://ummazone.herokuapp.com/
 - url: http://127.0.0.1:5000/
 
 tags:
