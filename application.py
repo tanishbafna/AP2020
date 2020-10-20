@@ -6,6 +6,7 @@ from dotenv import load_dotenv; load_dotenv()
 from cerberus import Validator
 from functools import wraps
 import firebase_admin
+from firebase_admin import auth, credentials
 import json
 import os
 from flask_swagger_ui import get_swaggerui_blueprint
@@ -27,7 +28,7 @@ db = pb.database()
 authCnx = pb.auth()
 
 # Admin SDK
-cred = firebase_admin.credentials.Certificate(json.load(open('fbAdminConfig.json')))
+cred = credentials.Certificate(json.load(open('fbAdminConfig.json')))
 default_app = firebase_admin.initialize_app(cred)
 
 APIKey=os.getenv('X-RapidAPI-Key')
@@ -76,7 +77,7 @@ def userId_required(f):
 
         # Obtaining userID using token
         try:
-            decodeToken = firebase_admin.auth.verify_id_token(token)
+            decodeToken = auth.verify_id_token(token)
             userId = decodeToken['uid']
         except:
             return Response(status=401)
@@ -494,7 +495,7 @@ def login():
 def logout(authDict):
 
     userId = authDict.get('userId')
-    firebase_admin.auth.revoke_refresh_tokens(userId)
+    auth.revoke_refresh_tokens(userId)
     return Response(status=200)
 
 # VIEW PROFILE
