@@ -20,7 +20,7 @@ jobs:
     - name: Build react frontend
       run: |
         cd Frontend && yarn build
-        mv Frontend/build/* static/
+        mv build/* ../static/
       env:
         CI: false
 
