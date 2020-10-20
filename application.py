@@ -83,8 +83,11 @@ def userId_required(f):
         # Obtaining userID using token
         try:
             decodeToken = auth.verify_id_token(token)
-            userId = decodeToken['email']
-            name = decodeToken.get ('name') or ''
+            try:
+                userId = decodeToken['uid']
+            except:
+                userId = authCnx.get_account_info(token).get('users')[0].get('localId')
+            name = decodeToken.get('name') or ''
         except:
             return Response(status=401)
         
