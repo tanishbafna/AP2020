@@ -55,7 +55,11 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: archive
-        path: ./
+        path: |
+          static
+          *.json
+          *.py
+          *.txt
     # Error checking, ignoring design errors
     - name: Lint with flake8
       run: |
