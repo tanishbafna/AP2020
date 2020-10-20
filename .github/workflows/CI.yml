@@ -34,7 +34,8 @@ jobs:
     - name: Copy production env
       run: | 
         echo -e '${{secrets.ENV}}' > .env
-        echo -e '${{secrets.FB_ADMIN_CONFIG}}' > fbAdminConfig.json
+        echo -e '${{secrets.FB_ADMIN_CONFIG}}' > fbAdminConfigB64.json
+        base64 --decode fbAdminConfigB64.json > fbAdminConfig.json
     
     # Caching dependencies
     - name: Cache pip
@@ -60,6 +61,7 @@ jobs:
           *.json
           *.py
           *.txt
+          .env
     # Error checking, ignoring design errors
     - name: Lint with flake8
       run: |
