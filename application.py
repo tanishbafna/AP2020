@@ -23,6 +23,7 @@ app.config['SECRET_KEY'] = os.urandom(24)
 @app.errorhandler(404)
 def page_not_found(e):
     # note that we set the 404 status explicitly
+    # return redirect('/docs')
     return app.send_static_file('static/index.html'), 200
 
 # Adding a CORS Policy
@@ -493,6 +494,48 @@ def login():
         return Response(status=401)
 
     return json.dumps({'idToken':user['idToken']})
+
+# NEW USER GIVEN GOOGLE
+@app.route('/api/google-signup', methods=["PUT"])
+@userId_required
+def addGUser(authDict):
+
+    userId = authDict.get('userId')
+    existing = db.child('userProfile').child(userId).get().val()
+
+    print(existing)
+
+    try:
+        print(authCnx.get_account_info(authDict['token']))
+        name = authCnx.get_account_info(authDict['token'])
+    except:
+        return Response(status=401)
+
+    data = {}
+    data['name'] = name
+    data['address'] = 'None'
+    data['orders'] = 0
+    data['wishlist'] = 0
+    data['incart'] = 0
+
+    addSchema = {
+        "name": {'type':'string', 'required':True, 'empty':False, 'nullable':False},
+        "address": {'type':'string', 'required':True, 'empty':False, 'nullable':False}
+        }
+
+    v = Validator(addSchema)
+    v.allow_unknown = True
+    try:
+        if not v.validate(data):
+            print(v.errors)
+            return Response(status=400)
+    except:
+        return Response(response=v.errors, status=400)
+
+    # Creating db entry for user
+    db.child('userProfile').child(userId).set(data)
+
+    return Response(status=200)
 
 # LOGOUT ROUTE
 @app.route('/api/logout', methods=["GET"])

@@ -21,7 +21,6 @@ jobs:
     - name: Copy production env
       run: | 
         echo -e "${{secrets.ENV}}" > .env
-        echo -e "${{secrets.ENV}}" > backend/.env
     
     # Caching dependencies
     - name: Cache pip

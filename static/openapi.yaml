@@ -21,7 +21,7 @@ tags:
   description: All Review Operations
 
 paths:
-  /signup:
+  /api/signup:
     post:
       tags:
       - User Endpoints
@@ -62,8 +62,20 @@ paths:
           content: {}
         401:
           description: User already exists or Unauthorized
+
+  /api/google-signup:
+    put:
+      tags:
+      - User Endpoints
+      summary: Google signup
+      operationId: GoogleSignup
+      responses:
+        200:
+          description: Succesfully added user in DB.
+        401:
+          description: User already exists or Unauthorized
   
-  /login:
+  /api/login:
     post:
       tags:
       - User Endpoints
@@ -99,7 +111,7 @@ paths:
         401:
           description: Unauthorized
     
-  /logout:
+  /api/logout:
     get:
       tags:
         - User Endpoints
@@ -111,7 +123,7 @@ paths:
       security:
       - Bearer: []
 
-  /:
+  /api/:
     get:
       tags:
       - Amazon Data
@@ -147,7 +159,7 @@ paths:
         401:
           description: Unauthorized
 
-  /product/{asin}:
+  /api/product/{asin}:
     get:
       tags:
       - Amazon Data
@@ -172,7 +184,7 @@ paths:
         404:
           description: No matching product
           
-  /reviews/{asin}/:
+  /api/reviews/{asin}/:
     get:
       tags:
       - Amazon Data
@@ -211,7 +223,7 @@ paths:
         401:
           description: Unauthorized
     
-  /categories:
+  /api/categories:
     get:
       tags:
       - Amazon Data
@@ -227,7 +239,7 @@ paths:
         401:
           description: Unauthorized
           
-  /cart/:
+  /api/cart/:
     put:
       tags:
       - Cart Endpoints
@@ -254,7 +266,7 @@ paths:
       security:
       - Bearer: []
       
-  /cart/{status}:
+  /api/cart/{status}:
     get:
       tags:
       - Cart Endpoints
@@ -281,7 +293,7 @@ paths:
       security:
       - Bearer: []
       
-  /cart/{status}/{asin}:
+  /api/cart/{status}/{asin}:
     delete:
       tags:
       - Cart Endpoints
@@ -305,7 +317,7 @@ paths:
       security:
       - Bearer: []
       
-  /cart/{status}/{asin}/:
+  /api/cart/{status}/{asin}/:
     patch:
       tags:
       - Cart Endpoints
@@ -344,7 +356,7 @@ paths:
       security:
       - Bearer: []
       
-  /reviews/{asin}:
+  /api/reviews/{asin}:
     put:
       tags:
       - Review Endpoints
