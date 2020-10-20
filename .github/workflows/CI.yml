@@ -19,7 +19,7 @@ jobs:
     - name: Copy production env
       run: | 
         echo -e '${{secrets.ENV}}' > .env
-        echo "${{secrets.FB_ADMIN_CONFIG}}" > fbAdminConfigB64.json
+        printf "${{secrets.FB_ADMIN_CONFIG}}" >> fbAdminConfigB64.txt
         base64 --decode fbAdminConfigB64.json > fbAdminConfig.json
     
     - name: Install node dependencies
