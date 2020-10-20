@@ -29,6 +29,7 @@ jobs:
       run: |
         cd Frontend && yarn build
         mv build/* ../static/
+        rm -rf ../static/.gitignore
         rm -rf Frontend
       env:
         CI: false
