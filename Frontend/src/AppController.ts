@@ -60,8 +60,9 @@ export default class AppController {
         const auth = new Firebase.auth.GoogleAuthProvider ()
         const result = await Firebase.auth().signInWithPopup (auth)
 
-        const token = (result.credential as any)['idToken']
-        localStorage.setItem (ACCESS_TOKEN_KEY, token)
+        
+        const token = await result.user?.getIdToken()//(result.credential as any)['idToken']
+        localStorage.setItem (ACCESS_TOKEN_KEY, token as string)
         
         await this.fetchJSON ('google-signup', 'PUT', undefined, true)
     }
