@@ -5,7 +5,7 @@ import * as Firebase from 'firebase'
 const ACCESS_TOKEN_KEY = 'um-access-token'
 
 export default class AppController {
-    endpoint = 'http://localhost:5000/api/'
+    endpoint = `${window.location.protocol}//${window.location.host.includes('ummazone') ? 'ummazone.herokuapp.com' : 'localhost:5000'}/api`
 
     async products (q?: string, page: number = 1, category?: string) {
         const qStr = querystring.encode({ q, 'page-number': page, category })
