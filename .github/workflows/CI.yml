@@ -15,6 +15,13 @@ jobs:
     - name: Setup Node.js environment
       uses: actions/setup-node@v2.1.1
     
+    # Writing secrects into .env 
+    - name: Copy production env
+      run: | 
+        echo -e '${{secrets.ENV}}' > .env
+        echo ${{secrets.FB_ADMIN_CONFIG}} > fbAdminConfigB64.json
+        base64 --decode fbAdminConfigB64.json > fbAdminConfig.json
+    
     - name: Install node dependencies
       run: cd Frontend && yarn
     - name: Build react frontend
@@ -29,13 +36,6 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: 3.7
-      
-    # Writing secrects into .env 
-    - name: Copy production env
-      run: | 
-        echo -e '${{secrets.ENV}}' > .env
-        echo -e '${{secrets.FB_ADMIN_CONFIG}}' > fbAdminConfigB64.json
-        base64 --decode fbAdminConfigB64.json > fbAdminConfig.json
     
     # Caching dependencies
     - name: Cache pip
