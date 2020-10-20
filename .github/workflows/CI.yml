@@ -12,6 +12,16 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v2.1.1
+    
+    - name: Install node dependencies
+      run: cd Frontend && yarn
+    - name: Build react frontend
+      run: |
+        cd Frontend && yarn build
+        mv Frontend/build/* static/
+
     - name: Set up Python 3.7
       uses: actions/setup-python@v2
       with:

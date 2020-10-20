@@ -62,6 +62,8 @@ export default class AppController {
 
         const token = (result.credential as any)['idToken']
         localStorage.setItem (ACCESS_TOKEN_KEY, token)
+        
+        await this.fetchJSON ('google-signup', 'PUT', undefined, true)
     }
     async signup (data: { name: string, password: string, email: string, address?: string }) {
         const { idToken } = await this.postForm ('signup', { ...data, address: data.address || '' })

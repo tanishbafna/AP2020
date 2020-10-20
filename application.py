@@ -83,7 +83,7 @@ def userId_required(f):
         # Obtaining userID using token
         try:
             decodeToken = auth.verify_id_token(token)
-            userId = decodeToken['uid']
+            userId = decodeToken['email']
         except:
             return Response(status=401)
         
@@ -506,8 +506,8 @@ def addGUser(authDict):
         return Response(status=200)
 
     data = {}
-    data['name'] = 'Not Provided'
-    data['address'] = 'Not Provided'
+    data['name'] = '...'
+    data['address'] = ' '
     data['orders'] = 0
     data['wishlist'] = 0
     data['incart'] = 0
