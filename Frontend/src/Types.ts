@@ -48,5 +48,24 @@ export type ReviewResult = {
     next_page: number
     reviews: Review[]
 }
-export type Cart = { [k: string]: { quantity: number, product: Product } }
+export type CartItem = { quantity: number, product: Product }
+export type Cart = { [k: string]: CartItem }
 export type Wishlist = { [k: string]: Product }
+
+export type Order = {
+    asin: string
+    status: 'orders'
+    name: string
+    price: string
+    quantity: string
+}
+
+export type JWT = {
+    exp: number
+    email: string
+}
+
+export type User = {
+    address: string
+    name: string
+}

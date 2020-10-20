@@ -43,43 +43,53 @@
     opacity: 0;
     pointer-events: none;
 }
-.cart-menu .item {
+.cart-scroll .item {
     position: relative;
     background-color: var(--color-primary);
     padding: 0.35rem;
     margin-bottom: 0.5rem;
+    max-height: 6rem;
     border-radius: var(--border-radius);
 
     display: flex;
     align-items: center;
+    justify-content: stretch;
 
     color: var(--color-primary-txt);
 }
-.cart-menu .item a {
+.cart-scroll .item a {
     text-decoration: none;
     color: var(--color-primary-txt);
 }
-.cart-menu .item a:hover {
+.cart-scroll .item a:hover {
     text-decoration: underline;
 }
-.cart-menu .item .inner {
+.cart-scroll .item .inner {
     display: flex;
     flex-direction: column;
+    justify-content: stretch;
+
+    width: 100%;
 }
-.cart-menu .item .inner > .quantity {
+.cart-scroll .item .inner .inner2 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.cart-scroll .item .inner2 > .quantity {
     margin-top: 0.7rem;
     color: white;
 }
-.cart-menu .item .inner > .quantity input {
+.cart-scroll .item .inner2 > .quantity input {
     border-radius: var(--border-radius);
     border: none;
     width: 2rem;
     padding: 0.2rem;
 }
-.cart-menu .item .inner > .quantity input:focus {
+.cart-scroll .item .inner2 > .quantity input:focus {
     outline: none;
 }
-.cart-menu .item > img {
+.cart-scroll .item > img {
     width: 2rem;
     height: 3rem;
     margin-right: 0.5rem;

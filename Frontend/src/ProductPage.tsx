@@ -29,7 +29,7 @@ export default ({productID}: { productID: string }) => {
             const title = product.title
             const q = title.split (' ').slice (0, 3).join (' ') // query with first few words
 
-            controller.products (q)
+            controller.products (q, 2)
             .then (r => setSimilar(r.products))
         }
     }, [ product ])
@@ -66,7 +66,7 @@ export default ({productID}: { productID: string }) => {
                                 <div className='recommendation-list'>
                                     {
                                         similar.map (product => (
-                                            <ProductPreview product={product} />
+                                            <ProductPreview key={product.asin} product={product} />
                                         ))
                                     }
                                 </div>
@@ -75,7 +75,7 @@ export default ({productID}: { productID: string }) => {
 
                         <div className='reviews'>
                             <div style={{display: 'flex', alignItems: 'center'}}>
-                                <ReactStars size={24} total={5} value={product.reviews.rating} edit={false}/>
+                                <ReactStars size={24} total={5} value={+product.reviews.rating} edit={false}/>
                                 <h2 style={{marginLeft: '0.5rem'}}>Reviews ({ product.reviews.total_reviews })</h2>
                             </div>
 

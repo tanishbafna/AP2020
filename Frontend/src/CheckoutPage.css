@@ -1,0 +1,16 @@
+.checkout {
+    background-color: var(--color-secondary);
+    border-radius: var(--border-radius);
+    width: 20rem;
+    padding: 0.8rem;
+
+    display: flex;
+    flex-direction: column;
+}
+.checkout h1 {
+    margin: 0;
+    color: var(--color-primary-txt);
+}
+.checkout > * { 
+    margin-bottom: 0.75rem;
+}

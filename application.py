@@ -16,9 +16,14 @@ import gunicorn
 
 # Setting up Flask
 
-application = app = Flask(__name__)
+application = app = Flask(__name__, static_url_path='', static_folder='static')
 app.url_map.strict_slashes = False
 app.config['SECRET_KEY'] = os.urandom(24)
+
+@app.errorhandler(404)
+def page_not_found(e):
+    # note that we set the 404 status explicitly
+    return app.send_static_file('static/index.html'), 200
 
 # Adding a CORS Policy
 CORS(app)
@@ -93,7 +98,7 @@ def userId_required(f):
 #=========================
 
 # HOME
-@app.route('/', methods=["GET"])
+@app.route('/api', methods=["GET"])
 @docache(20)
 def home():
 
@@ -128,7 +133,7 @@ def home():
 #=========================
 
 # DETAILS
-@app.route('/product/<string:idStr>', methods=["GET"])
+@app.route('/api/product/<string:idStr>', methods=["GET"])
 @docache(60)
 def details(idStr):
 
@@ -174,7 +179,7 @@ def details(idStr):
 #=========================
 
 # REVIEWS
-@app.route('/reviews/<string:idStr>', methods=["GET"])
+@app.route('/api/reviews/<string:idStr>', methods=["GET"])
 @docache(2)
 def reviews(idStr):
 
@@ -226,7 +231,7 @@ def reviews(idStr):
 
 #=========================
 
-@app.route('/categories', methods=["GET"])
+@app.route('/api/categories', methods=["GET"])
 @docache(30)
 def categories():
 
@@ -247,7 +252,7 @@ def categories():
 #=========================
 
 # ADDING TO CART
-@app.route('/cart', methods=["PUT"])
+@app.route('/api/cart', methods=["PUT"])
 @userId_required
 def cartAdd(authDict):
 
@@ -285,7 +290,7 @@ def cartAdd(authDict):
 #=========================
 
 # VIEWING AND FILTERING CART
-@app.route('/cart/<string:status>', methods=["GET"])
+@app.route('/api/cart/<string:status>', methods=["GET"])
 @userId_required
 def cartView(authDict, status):
 
@@ -309,7 +314,7 @@ def cartView(authDict, status):
 #=========================
 
 # EDITING CART STATUS
-@app.route('/cart/<string:status>/<string:idStr>', methods=["PATCH"])
+@app.route('/api/cart/<string:status>/<string:idStr>', methods=["PATCH"])
 @userId_required
 def cartEdit(authDict, status, idStr):
 
@@ -345,7 +350,7 @@ def cartEdit(authDict, status, idStr):
 #=========================
 
 # REMOVING FROM CART
-@app.route('/cart/<string:status>/<string:idStr>', methods=["DELETE"])
+@app.route('/api/cart/<string:status>/<string:idStr>', methods=["DELETE"])
 @userId_required
 def cartRemove(authDict, status, idStr):
 
@@ -363,7 +368,7 @@ def cartRemove(authDict, status, idStr):
 # REVIEWS
 #=========================
 
-@app.route('/reviews/<string:idStr>', methods=["PUT"])
+@app.route('/api/reviews/<string:idStr>', methods=["PUT"])
 @userId_required
 def addReview(authDict, idStr):
 
@@ -428,7 +433,7 @@ def addReview(authDict, idStr):
 #=========================
 
 # NEW USER GIVEN USERID
-@app.route('/signup', methods=["POST"])
+@app.route('/api/signup', methods=["POST"])
 def addUser():
 
     try:
@@ -463,8 +468,8 @@ def addUser():
     try:
         user = authCnx.create_user_with_email_and_password(email, password)
         userId = user['localId']
-    except:
-        return Response(status=401)
+    except requests.exceptions.HTTPError as err:
+        return Response(response=str(err),status=400)
 
     # Creating db entry for user
     db.child('userProfile').child(userId).set(data)
@@ -472,7 +477,7 @@ def addUser():
     return json.dumps({'idToken':user['idToken']})
 
 # LOGIN ROUTE
-@app.route('/login', methods=["POST"])
+@app.route('/api/login', methods=["POST"])
 def login():
 
     try:
@@ -490,7 +495,7 @@ def login():
     return json.dumps({'idToken':user['idToken']})
 
 # LOGOUT ROUTE
-@app.route('/logout', methods=["GET"])
+@app.route('/api/logout', methods=["GET"])
 @userId_required
 def logout(authDict):
 
@@ -499,7 +504,7 @@ def logout(authDict):
     return Response(status=200)
 
 # VIEW PROFILE
-@app.route('/profile', methods=["GET"])
+@app.route('/api/profile', methods=["GET"])
 @userId_required
 def viewUser(authDict):
 
@@ -512,7 +517,7 @@ def viewUser(authDict):
     return json.dumps(data, indent=4)
 
 # EDIT PROFILE
-@app.route('/profile/edit', methods=["PATCH"])
+@app.route('/api/profile/edit', methods=["PATCH"])
 @userId_required
 def editUser(authDict):
 

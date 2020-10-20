@@ -3,10 +3,11 @@ import {ReactComponent as CartIcon} from './Images/Cart.svg'
 import { StoreContext } from './Store'
 import { Product } from './Types'
 import './Cart.css'
+import CheckoutPage from './CheckoutPage'
 
 const CartItem = ({item}: { item: { quantity: number, product: Product } }) => {
-    const { alterItemsInCart } = useContext (StoreContext)
-
+    const { alterItemsInCart, moveItemToWishlist } = useContext (StoreContext)
+    
     const deleteItem = () => {
         if (!window.confirm(`Are you sure you want to remove ${item.product.title.slice(0, 30)} from your cart?`)) return
         alterItemsInCart (item.product, -item.quantity)
@@ -19,9 +20,13 @@ const CartItem = ({item}: { item: { quantity: number, product: Product } }) => {
 
             <div className='inner'>
                 <a href={'/product/' + item.product.asin }>{item.product.title}</a>
-                <span className='quantity'> 
-                    Quantity: <input defaultValue={item.quantity} type="number" name='quantity' step='1' onChange={ e => alterItemsInCart(item.product, +(e.target.value)-item.quantity) }/> 
-                </span> 
+                <div className='inner2'>
+                    <span className='quantity'> 
+                        Quantity: <input defaultValue={item.quantity} type="number" name='quantity' step='1' onChange={ e => alterItemsInCart(item.product, +(e.target.value)-item.quantity) }/>
+                    </span> 
+                    <button className='btn-secondary' onClick={ () => moveItemToWishlist(item.product) } data-small>Move to wishlist</button> 
+                </div>
+                
             </div>
         </div>
     )
@@ -30,6 +35,7 @@ const CartItem = ({item}: { item: { quantity: number, product: Product } }) => {
 export default () => {
     const {cart} = useContext (StoreContext)
     const [openCart, setOpenCart] = useState (false)
+    const [openCheckout, setOpenCheckout] = useState (false)
 
     const cartLength = Object.values(cart).reduce ((t, q) => t = t+q.quantity, 0)
 
@@ -47,6 +53,7 @@ export default () => {
 
     return (
         <div>
+            { openCheckout && <CheckoutPage cart={Object.values(cart)} dismiss={ () => setOpenCheckout(false) } /> }
             <button className='btn-transparent' style={{height: '2.5rem'}} onClick={ () => setOpenCart(!openCart) }>
                 <CartIcon style={{ fill: 'var(--color-secondary)' }}/>
                 <div className='counter'>
@@ -62,7 +69,7 @@ export default () => {
                     ))
                 }
                 </div>
-                <button className='btn-tertiary' style={{height: '3.5rem'}}>
+                <button className='btn-tertiary' style={{height: '3.5rem'}} onClick={ () => { setOpenCart(false); setOpenCheckout(true) } }>
                     Checkout
                 </button>
             </div>

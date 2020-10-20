@@ -5,18 +5,21 @@ import {ReactComponent as UserIcon} from './Images/User.svg'
 import './Header.css'
 import Login from './Login'
 import Wishlist from './Wishlist'
+import AppController from './AppController'
 
 const User = () => {
-    const [state, setState] = useState ('unauthenticated')
     const [openedLogin, setOpenedLogin] = useState (false)
+    const controller = new AppController ()
 
     const userButtonClicked = () => {
-        setOpenedLogin (true)
+        if (controller.isLoggedIn()) {
+            window.location.replace ('/user')
+        } else setOpenedLogin (true)
     }
     return (
         <div>
+            <Login open={openedLogin} dismiss={ () => { setOpenedLogin(false); if(controller.isLoggedIn()) userButtonClicked() } }/>
             <button className='btn-transparent' style={{height: '2.5rem'}} onClick={ userButtonClicked }>
-                { openedLogin && <Login /> }
                 <UserIcon style={{ fill: 'var(--color-secondary)' }}/>
             </button>
         </div>

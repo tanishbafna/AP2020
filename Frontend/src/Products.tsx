@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { StoreContext } from './Store'
 import { Product } from './Types'
 import InfiniteScroll from 'react-infinite-scroll-component'
@@ -7,6 +7,7 @@ import { FadeLoader } from 'react-spinners'
 import {ReactComponent as CheckIcon} from './Images/Check.svg'
 import './Products.css'
 import ProductPage from './ProductPage'
+import CheckoutPage from './CheckoutPage'
 
 export const ProductPrice = ({product}: { product: Product }) => (
     <div className='price-display'>
@@ -16,9 +17,12 @@ export const ProductPrice = ({product}: { product: Product }) => (
 )
 export const ProductButtons = (props: { product: Product }) => {
     const { alterItemsInCart, alterItemsInWishlist } = useContext (StoreContext)
+    const [openedCheckout, setOpenedCheckout] = useState (false)
+
     return (
         <>
-        <button className='btn btn-tertiary' onClick={ () => {} }>
+        { openedCheckout && <CheckoutPage cart={ [ { quantity: 1, product: props.product } ] } dismiss={ () => setOpenedCheckout(false) }/> }
+        <button className='btn btn-tertiary' onClick={ () => setOpenedCheckout(true) }>
             Buy Now
         </button> 
         <button className='btn btn-secondary' onClick={ () => alterItemsInCart (props.product, 1) }>

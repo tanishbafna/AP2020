@@ -8,6 +8,11 @@
   --color-alert: rgb(250, 77, 77);
   --border-radius: 0.2rem;
 }
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 body {
   background-color: var(--color-secondary);
 }
@@ -31,6 +36,10 @@ button {
 button svg {
   height: 95%;
   width: 2.5rem;
+}
+button[data-small] {
+  padding: 0.3rem 0.5rem;
+  font-size: small;
 }
 .btn-transparent {
   background: none;
