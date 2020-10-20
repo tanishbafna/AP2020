@@ -21,6 +21,8 @@ jobs:
       run: |
         cd Frontend && yarn build
         mv Frontend/build/* static/
+      env:
+        CI: false
 
     - name: Set up Python 3.7
       uses: actions/setup-python@v2
