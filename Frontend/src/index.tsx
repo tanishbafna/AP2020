@@ -2,7 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
+import * as Firebase from 'firebase'
 import * as serviceWorker from './serviceWorker';
+
+Firebase.initializeApp (require('./fbconfig.json'))
 
 ReactDOM.render(
   <React.StrictMode>

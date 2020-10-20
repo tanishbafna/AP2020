@@ -1,5 +1,6 @@
 import { Cart, Category, JWT, ProductFull, ProductResult, ReviewResult, Wishlist, User, Order, Product } from "./Types"
 import querystring from 'querystring'
+import * as Firebase from 'firebase'
 
 const ACCESS_TOKEN_KEY = 'um-access-token'
 
@@ -46,13 +47,24 @@ export default class AppController {
         const user = await this.fetchJSON ('profile', 'GET', undefined, true)
         return user as User
     }
+    async updateProfile (edit: { address?: string, name?: string }) {
+        const user = await this.fetchJSON ('profile', 'PATCH', edit, true)
+        return user as User
+    }
     async login (email: string, password: string) {
         const { idToken } = await this.postForm ('login', { email, password })
         localStorage.setItem (ACCESS_TOKEN_KEY, idToken)
         return idToken as string
     }
+    async loginGoogle () {
+        const auth = new Firebase.auth.GoogleAuthProvider ()
+        const result = await Firebase.auth().signInWithPopup (auth)
+
+        const token = (result.credential as any)['idToken']
+        localStorage.setItem (ACCESS_TOKEN_KEY, token)
+    }
     async signup (data: { name: string, password: string, email: string, address?: string }) {
-        const { idToken } = await this.postForm ('signup', { ...data, address: '' })
+        const { idToken } = await this.postForm ('signup', { ...data, address: data.address || '' })
         localStorage.setItem (ACCESS_TOKEN_KEY, idToken)
         return idToken as string
     }
@@ -87,7 +99,9 @@ export default class AppController {
         localStorage.setItem ('wishlist', JSON.stringify(cart))
     }
     getUser () {
-        return this.user ( localStorage.getItem(ACCESS_TOKEN_KEY) )
+        try {
+            return this.user ( localStorage.getItem(ACCESS_TOKEN_KEY) )
+        } catch {}
     }
     private async postForm (path: string, body: { [k: string]: string }) {
         const form = new FormData ()

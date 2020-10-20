@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { FadeLoader } from 'react-spinners'
 import AppController from "./AppController"
 import { Order, User, ProductFull } from './Types'
+import AwesomeDebouncePromise from "awesome-debounce-promise";
+import useConstant from "use-constant";
 import './UserPage.css'
 
 const OrderItem = ({ order }: { order: Order }) => {
@@ -37,10 +39,19 @@ export default () => {
     useEffect (() => {
         controller.profile ()
         .then (setUser)
+        .catch (err => {})
 
         controller.orders ()
         .then (setOrders)
+        .catch (err => {})
     }, [])
+
+    const updateUserDebounced = useConstant (() => AwesomeDebouncePromise(
+        (edit: { address?: string, name?: string }) => {
+            console.log ('lol')
+            controller.updateProfile (edit)
+        }, 500)
+    )
 
     return (
         <div className='user-page'>
@@ -50,14 +61,14 @@ export default () => {
                 user && (
                 <>
                 <div className='header'>
-                    <h1>{ user.name }</h1>
-                    <span>{ jwt.email }</span>
+                    <input defaultValue={user.name} className='h1' onChange={ e => updateUserDebounced({ name: (e.target as any).value }) } />
+                    <span>{ jwt?.email }</span>
                 </div>
                 <hr/>
                 <div className='section'>
                     <h2>My Address</h2>
                     <hr/>
-                    <input defaultValue={user.address} type='textarea' placeholder='enter your address here'/>
+                    <textarea rows={5} defaultValue={user.address} placeholder='enter your address here' onChange={ e => updateUserDebounced({ address: e.target.value }) }/>
                 </div>
 
                 <div className='section'>
