@@ -50,7 +50,7 @@ app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return app.send_static_file('static/index.html'), 200
+    return app.send_static_file('index.html'), 200
 
 def docache(minutes=5, content_type='application/json; charset=utf-8'):
     """ Flask decorator that allow to set Expire and Cache headers. """
