@@ -20,12 +20,6 @@ application = app = Flask(__name__, static_url_path='', static_folder='static')
 app.url_map.strict_slashes = False
 app.config['SECRET_KEY'] = os.urandom(24)
 
-@app.errorhandler(404)
-def page_not_found(e):
-    # note that we set the 404 status explicitly
-    # return redirect('/docs')
-    return app.send_static_file('static/index.html'), 200
-
 # Adding a CORS Policy
 CORS(app)
 
@@ -44,7 +38,7 @@ country = "IN"
 # Setting up Swagger UI
 
 SWAGGER_URL = '/docs'
-API_URL = '/static/openapi.yaml'
+API_URL = '/openapi.yaml'
 
 swaggerui_blueprint = get_swaggerui_blueprint(
     SWAGGER_URL,
@@ -52,6 +46,11 @@ swaggerui_blueprint = get_swaggerui_blueprint(
     config={'app_name': "E-Commerce AP20"})
 
 app.register_blueprint(swaggerui_blueprint, url_prefix=SWAGGER_URL)
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return app.send_static_file('static/index.html'), 200
 
 def docache(minutes=5, content_type='application/json; charset=utf-8'):
     """ Flask decorator that allow to set Expire and Cache headers. """
