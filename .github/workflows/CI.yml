@@ -20,7 +20,7 @@ jobs:
       run: | 
         echo -e '${{secrets.ENV}}' > .env
         printf "${{secrets.FB_ADMIN_CONFIG}}" >> fbAdminConfigB64.txt
-        base64 --decode fbAdminConfigB64.json > fbAdminConfig.json
+        base64 --decode fbAdminConfigB64.txt > fbAdminConfig.json
     
     - name: Install node dependencies
       run: cd Frontend && yarn
