@@ -560,7 +560,7 @@ def viewUser(authDict):
     return json.dumps(data, indent=4)
 
 # EDIT PROFILE
-@app.route('/api/profile/edit', methods=["PATCH"])
+@app.route('/api/profile', methods=["PATCH"])
 @userId_required
 def editUser(authDict):
 
@@ -570,7 +570,7 @@ def editUser(authDict):
     addSchema = {
         "name": {'type':'string', 'required':False, 'empty':False, 'nullable':False},
         "address": {'type':'string', 'required':False, 'empty':False, 'nullable':False}
-        }
+    }
 
     if data is None:
         return Response(response={'error': 'no data sent'}, status=400)
