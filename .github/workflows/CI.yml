@@ -1,0 +1,46 @@
+name: heroku-deploy
+
+on:
+  push:
+    branches: 
+    - master
+
+jobs:
+
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.7
+      
+    # Writing secrects into .env 
+    - name: Copy production env
+      run: | 
+        echo -e "${{secrets.ENV}}" > .env
+        echo -e "${{secrets.ENV}}" > backend/.env
+    
+    # Caching dependencies
+    - name: Cache pip
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+          ${{ runner.os }}-
+
+    # Installing dependencies
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    # Error checking, ignoring design errors
+    - name: Lint with flake8
+      run: |
+        pip install flake8
+        flake8 . --ignore E501,E265,E302,W293,E722,E231,E122,W291,E303,E261,E211,E301,E123,E305,E126,E221,F401,E402,W292,C901,E712 --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics

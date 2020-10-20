@@ -22,12 +22,12 @@ app.config['SECRET_KEY'] = os.urandom(24)
 # Adding a CORS Policy
 CORS(app)
 
-pb = pyrebase.initialize_app(json.load(open('backend/fbconfig.json')))
+pb = pyrebase.initialize_app(json.load(open('fbconfig.json')))
 db = pb.database()
 authCnx = pb.auth()
 
 # Admin SDK
-cred = credentials.Certificate(json.load(open('backend/fbAdminConfig.json')))
+cred = credentials.Certificate(json.load(open('fbAdminConfig.json')))
 default_app = firebase_admin.initialize_app(cred)
 
 APIKey=os.getenv('X-RapidAPI-Key')
@@ -148,10 +148,13 @@ def details(idStr):
 
     try:
         reviewData = db.child('reviews').child(idStr).get().val()
-        reviewData = json.loads(reviewData)
+        try:
+            reviewData = json.loads(reviewData)
+        except:
+            reviewData = dict(reviewData)
         reviewAvailable = True
     except:
-        reviewData = {'rating': None, 'total_reviews': 0, 'answered_questions': 0}
+        reviewData = {'rating': None, 'total_reviews': 0}
         reviewAvailable = False
 
     try:
@@ -195,7 +198,7 @@ def reviews(idStr):
 
     try:
         reviewData = db.child('reviews').child(idStr).get().val()
-        reviewData = json.loads(reviewData)
+        reviewData = dict(reviewData)
         reviewAvailable = True
     except:
         reviewAvailable = False
@@ -205,8 +208,8 @@ def reviews(idStr):
     
     if reviewAvailable:
         reviewList = []
-        reviewData = reviewData.pop('total_reviews')
-        reviewData = reviewData.pop('rating')
+        reviewData.pop('total_reviews')
+        reviewData.pop('rating')
 
         if filterStar is None:
             for v in reviewData.values():
@@ -537,4 +540,4 @@ def editUser(authDict):
 
 #=========================
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)

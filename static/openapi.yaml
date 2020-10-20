@@ -564,15 +564,11 @@ components:
     addReview:
       type: object
       required:
-      - id
       - name
       - rating
       - review
       - title
       properties:
-        id:
-          type: string
-          description: userId
         name:
           type: string
           description: userName

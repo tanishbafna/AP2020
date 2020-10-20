@@ -1,3 +1,5 @@
+# THIS FILE IS A TESTING FILE. DO NOT RUN IN PRODUCTION.
+
 from flask import Flask, request, Response
 import firebase_admin
 from firebase_admin import credentials, auth
