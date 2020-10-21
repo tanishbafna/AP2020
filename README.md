@@ -26,8 +26,9 @@
 
  - Fuzzy Search
  - Recommendation Engine
+ - Bearer Token Auth
  - Cache-Control
- - Single Page Application 
+ - Single Page Application
 
 ## Citation 
 
