@@ -1,4 +1,4 @@
-import { Cart, Category, JWT, ProductFull, ProductResult, ReviewResult, Wishlist, User, Order, Product } from "./Types"
+import { Cart, Category, Review, JWT, ProductFull, ProductResult, ReviewResult, Wishlist, User, Order, Product } from "./Types"
 import querystring from 'querystring'
 import * as Firebase from 'firebase'
 
@@ -19,6 +19,15 @@ export default class AppController {
     async reviews (asin: string, page: number = 1) {
         const result = await this.fetchJSON ('reviews/' + asin + '?page-number=' + page, 'GET')
         return result as ReviewResult
+    }
+    async addReview (asin: string, review: { rating: number, title: string, review: string }) {
+        const user = await this.profile ()
+        const modal = {
+            name: user.name,
+            ...review
+        }
+        await this.fetchJSON ('reviews/' + asin, 'PUT', modal, true)
+        return { id: '1234', ...modal } as Review
     }
     async categories () {
         const results = await this.fetchJSON ('categories', 'GET') as Category[]

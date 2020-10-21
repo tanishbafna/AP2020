@@ -184,7 +184,7 @@ def details(idStr):
 
 # REVIEWS
 @app.route('/api/reviews/<string:idStr>', methods=["GET"])
-@docache(2)
+@docache(1)
 def reviews(idStr):
 
     page = request.args.get('page-number', type=int, default=1)
@@ -206,11 +206,14 @@ def reviews(idStr):
 
     dataResponse = response.json()
 
-    try:
-        reviewData = db.child('reviews').child(idStr).get().val()
-        reviewData = dict(reviewData)
-        reviewAvailable = True
-    except:
+    if page == 1:
+        try:
+            reviewData = db.child('reviews').child(idStr).get().val()
+            reviewData = dict(reviewData)
+            reviewAvailable = True
+        except:
+            reviewAvailable = False
+    else:
         reviewAvailable = False
 
     if (dataResponse is None or dataResponse == {}) and reviewAvailable is False:

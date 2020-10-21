@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { StoreContext, useReviewsStore } from './Store'
 import { Product, ProductFull } from './Types'
 import ReactStars from "react-rating-stars-component"
@@ -7,14 +7,19 @@ import './ProductPage.css'
 import AppController from './AppController'
 import { ProductButtons, ProductPrice, ProductPreview } from './Products'
 import InfiniteScroll from 'react-infinite-scroll-component'
+import ProgressButton from './ProgressButton'
+import { verifyRefs } from './Login'
 
 export default ({productID}: { productID: string }) => {
-    const {alterItemsInCart, setOpenedProduct} = useContext (StoreContext)
-    const { reviews, hasMore, fetchMoreReviews } = useReviewsStore (productID)
+    const { reviews, hasMore, fetchMoreReviews, insertReview } = useReviewsStore (productID)
     const controller = new AppController ()
 
     const [similar, setSimilar] = useState ([] as Product[])
     const [product, setProduct] = useState (undefined as any as ProductFull)
+
+    const ratingRef = useRef ({ value: undefined } as { value?: number })
+    const reviewTitleRef = useRef (undefined as any)
+    const reviewContentRef = useRef (undefined as any)
 
     useEffect (() => {
         setProduct (undefined as any)
@@ -33,6 +38,24 @@ export default ({productID}: { productID: string }) => {
             .then (r => setSimilar(r.products))
         }
     }, [ product ])
+
+    const writeReview = async () => {
+        if (!controller.isLoggedIn()) {
+            return window.alert ('Please log in to write the review!')
+        }
+        const orders = await controller.orders ()
+        if (!orders.find(o => o.asin === productID)) {
+            return window.alert ('You haven\'t ordered this product. Please order before you write a review')
+        }
+        const data = verifyRefs ([
+            { ref: ratingRef, key: 'rating' },
+            { ref: reviewTitleRef, key: 'title' },
+            { ref: reviewContentRef, key: 'review' }
+        ])
+        if (!data) return
+        const review = await controller.addReview (productID, data as any)
+        insertReview (review)
+    }
 
     return (
         <div className='product-full'>
@@ -83,16 +106,16 @@ export default ({productID}: { productID: string }) => {
                                 <div className='review write-review'>
                                     <div className='header'>
                                         <span style={{display: 'flex', alignItems: 'center'}}>
-                                            <ReactStars style={{flexGrow: '1'}} size={24} total={5} edit={true}/>
-                                            <input type='text' placeholder='title...'/>
+                                            <ReactStars onChange={ (r: number) => ratingRef.current.value = r } style={{flexGrow: '1'}} size={24} total={5} edit={true}/>
+                                            <input ref={reviewTitleRef} type='text' placeholder='title...'/>
                                         </span>
                                     </div>
                                     
-                                    <input type='textarea' placeholder='write your review...'/>
+                                    <textarea ref={reviewContentRef} rows={10} placeholder='write your review...'/>
                                     <br />
-                                    <button className='btn-tertiary'>
+                                    <ProgressButton onClick={writeReview} className='btn-tertiary' loaderType='beat' loaderColor='var(--color-secondary)'>
                                         Write
-                                    </button>
+                                    </ProgressButton>
                                 </div>
 
                                 <hr/>

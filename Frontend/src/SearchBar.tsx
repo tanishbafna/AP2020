@@ -97,7 +97,7 @@ export default () => {
                                     <span 
                                         className='product-title' 
                                         onClick={ () => {
-                                            store.setOpenedProduct(product.asin)
+                                            window.location.replace (`/product/${product.asin}`)
                                             setCancelledSearch (true)
                                         } }>
                                             { product.title }

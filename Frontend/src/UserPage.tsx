@@ -19,7 +19,7 @@ const OrderItem = ({ order }: { order: Order }) => {
         <div className='order-row'>
             <div style={{ display: 'flex', alignItems: 'center' }}>
                 <img src={product?.main_image} />
-                { order.name }
+                <a href={`/product/${order.asin}`}>{ order.name }</a>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', textAlign: 'right' }}>
                 x{order.quantity}<br/>

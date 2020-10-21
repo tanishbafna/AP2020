@@ -1,6 +1,13 @@
 .user-page {
     padding: 0.5rem 1rem;
 }
+.user-page a {
+    text-decoration: none;
+    color: var(--color-secondary-txt);
+}
+.user-page a:hover {
+    text-decoration: underline;
+}
 .user-page .header {
     background: none;
     display: flex;

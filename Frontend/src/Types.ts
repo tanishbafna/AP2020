@@ -40,9 +40,9 @@ export type Review = {
     name: string
     rating: number
     review: string
-    review_data: string
+    review_data?: string
     title: string
-    verified_purchase: boolean
+    verified_purchase?: boolean
 }
 export type ReviewResult = {
     next_page: number

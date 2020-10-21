@@ -1,7 +1,18 @@
-import React, { MutableRefObject, Ref, useRef, useState } from 'react'
+import React, { MutableRefObject, useRef, useState } from 'react'
 import AppController from './AppController'
 import ProgressButton from './ProgressButton'
 import './Login.css'
+
+
+export const verifyRefs = (refs: { ref: MutableRefObject<any>, key: string }[]) => {
+    let values: {[k: string]: any} = {}
+    for (let ref of refs) {
+        const value = ref.ref.current.value
+        if (!value) return window.alert (`Please enter your ${ref.key}!`)
+        values[ref.key] = value
+    }
+    return values
+}
 
 export default ({ open, dismiss }: { open: boolean, dismiss: () => void }) => {
     const controller = new AppController ()
@@ -11,16 +22,6 @@ export default ({ open, dismiss }: { open: boolean, dismiss: () => void }) => {
     const addrRef = useRef (undefined as any)
 
     const [openedRegister, setOpenedRegister] = useState (false)
-
-    const verifyRefs = (refs: { ref: MutableRefObject<any>, key: string }[]) => {
-        let values: {[k: string]: string} = {}
-        for (let ref of refs) {
-            const value = ref.ref.current.value as string
-            if (!value) return window.alert (`Please enter your ${ref.key}!`)
-            values[ref.key] = value
-        }
-        return values
-    }
 
     const login = async () => {
         const vals = verifyRefs ([ { ref: emailRef, key: 'email' }, { ref: passRef, key: 'password' } ])

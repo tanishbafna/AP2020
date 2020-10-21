@@ -164,5 +164,6 @@ export const useReviewsStore = (product: string) => {
         reviews,
         hasMore,
         fetchMoreReviews: () => fetchReviews (reviews),
+        insertReview: (review: Review) => setReviews ([ review, ...reviews ])
     }
 }
