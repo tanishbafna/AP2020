@@ -15,7 +15,7 @@
 ## Local Run
 **Note: only possible for developers who have `fbAdminConfig.json` and `env.sample` (included in zip)**
 
- 1) Make `env.sample` a `.env` file
+ 1) Make `.env.sample` a `.env` file
  2) `cd` into directory and install dependencies using `pip3 install -r requirements.txt`
  3) Run `application.py`. Confirm that it serves on `http://127.0.0.1:5000/`
  4) `cd` into `Frontend` and run `yarn`. **(yarn should be installed)**
